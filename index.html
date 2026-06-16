@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Matt.dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="avatar-col">
+        <div class="avatar-ring">
+          <img src="https://cdn.modrinth.com/user/ZBSQgj3M/5f763a0082359b422915037e86897e7c07fad54f_96.webp" alt="Matt_Lawliet" class="avatar-img" />
+        </div>
+      </div>
+      <div class="hero-text">
+        <h1>Matt<span class="accent">.</span>dev</h1>
+        <p class="handle">Matt_Lawliet</p>
+        <p class="bio">Minecraft mod &amp; plugin dev. Building tools that actually work the way they should.</p>
+        <div class="links">
+          <a href="https://github.com/MattLawliet" class="link-btn" target="_blank">GitHub</a>
+          <a href="https://modrinth.com/user/Matt_Lawliet" class="link-btn" target="_blank">Modrinth</a>
+          <a href="mailto:math970621@gmail.com" class="link-btn">Contact</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="projects-section">
+      <div class="section-header">
+        <h2>Projects</h2>
+        <div class="filters" id="filters">
+          <button class="filter active" data-tag="all">All</button>
+          <button class="filter" data-tag="Fabric Mod">Fabric Mod</button>
+          <button class="filter" data-tag="Paper Plugin">Paper Plugin</button>
+        </div>
+      </div>
+
+      <div class="grid" id="grid">
+
+        <!-- PUBLISHED -->
+
+        <article class="card" data-tags='["Fabric Mod"]' data-modrinth="art-snap" data-downloads="91">
+          <div class="card-top">
+            <span class="card-icon">🗺️</span>
+            <div class="card-meta">
+              <h3>Art Snap</h3>
+              <p class="card-desc">Save, export, and import map art between worlds. Preserves custom names, formatting, enchantments — full .dat file cloning.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21.10+</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Save, export, and import map art between worlds. Preserves custom names, formatting, enchantments, and maintains Minecraft map compatibility through .dat file cloning.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 91 downloads</span>
+                <a href="https://modrinth.com/mod/art-snap" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Paper Plugin"]' data-modrinth="death-on-the-spot" data-downloads="85">
+          <div class="card-top">
+            <span class="card-icon">💀</span>
+            <div class="card-meta">
+              <h3>Death On The Spot</h3>
+              <p class="card-desc">Full inventory saved on death to JSON. GUI-based retrieval from death chests. Supports double chests and auto-cleanup on recovery.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag paper">Paper Plugin</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21.10</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Kotlin-based plugin saving full inventories on death to JSON files with GUI-based retrieval from designated death chests. Supports double chests and includes automatic cleanup upon full inventory recovery.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 85 downloads</span>
+                <a href="https://modrinth.com/plugin/death-on-the-spot" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Fabric Mod"]' data-modrinth="matt-mods" data-downloads="77">
+          <div class="card-top">
+            <span class="card-icon">🔧</span>
+            <div class="card-meta">
+              <h3>Matt's Mods</h3>
+              <p class="card-desc">Admin command utilities: changelog system and inventory backup triggered by right-clicking beds.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21.8</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Command utilities including a changelog system for admins and inventory backup functionality triggered by right-clicking beds.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 77 downloads</span>
+                <a href="https://modrinth.com/mod/matt-mods" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Paper Plugin"]' data-modrinth="shopah" data-downloads="36">
+          <div class="card-top">
+            <span class="card-icon">🛒</span>
+            <div class="card-meta">
+              <h3>Shopah</h3>
+              <p class="card-desc">Item-based trading shops via signs on chests. No economy plugin needed — players trade items directly with live stock displays.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag paper">Paper Plugin</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21–1.21.11</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Item-based trading shops using signs on chests/barrels. Requires no economy plugin; players trade items directly with customizable pricing and live stock displays.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 36 downloads</span>
+                <a href="https://modrinth.com/plugin/shopah" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Paper Plugin"]' data-modrinth="deathchestreborn" data-downloads="21">
+          <div class="card-top">
+            <span class="card-icon">📦</span>
+            <div class="card-meta">
+              <h3>DeathChestReborn</h3>
+              <p class="card-desc">Preserves player inventories on death via admin-registered chests. GUI retrieval, configurable storage limits, in-world renderer.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag paper">Paper Plugin</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21–1.21.11</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Preserves player inventories upon death, allowing retrieval from admin-registered chest locations. Features auto-save of inventory/armor/offhand, GUI-based item retrieval, configurable storage limits, and in-world chest rendering.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 21 downloads</span>
+                <a href="https://modrinth.com/plugin/deathchestreborn" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Paper Plugin"]' data-modrinth="forkinteractions" data-downloads="17">
+          <div class="card-top">
+            <span class="card-icon">🔱</span>
+            <div class="card-meta">
+              <h3>ForkInteractions</h3>
+              <p class="card-desc">Non-Loyalty tridents lose thrower ownership on landing so other players can pick them up. Simple. Paper-only.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag paper">Paper Plugin</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21–1.21.11</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Controls interactions with thrown tridents, specifically managing whether non-Loyalty versions can be retrieved by players other than the thrower. Paper-only, zero config needed.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 17 downloads</span>
+                <a href="https://modrinth.com/plugin/forkinteractions" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Paper Plugin"]' data-modrinth="superutilities" data-downloads="9">
+          <div class="card-top">
+            <span class="card-icon">⚙️</span>
+            <div class="card-meta">
+              <h3>SuperUtilities</h3>
+              <p class="card-desc">Admin commands for GriefPrevention: paginated claim listing, teleportation, deletion. EssentialsX integration for data resolution.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag paper">Paper Plugin</span><span class="tag published">Published</span></div>
+            <span class="mc-ver">1.21–1.21.11</span>
+          </div>
+          <div class="card-expand">
+            <div class="expand-divider"></div>
+            <div class="expand-body">
+              <p>Administrative command set for managing GriefPrevention claims with paginated listing, teleportation, and deletion features. Integrates with EssentialsX for enhanced data resolution.</p>
+              <div class="expand-meta">
+                <span class="stat">⬇ 9 downloads</span>
+                <a href="https://modrinth.com/plugin/superutilities" target="_blank" class="modrinth-link">View on Modrinth →</a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- LOCAL / WIP -->
+
+        <article class="card" data-tags='["Fabric Mod"]'>
+          <div class="card-top">
+            <span class="card-icon">⚗️</span>
+            <div class="card-meta">
+              <h3>wtf</h3>
+              <p class="card-desc">Personal Fabric mod template. Config scaffolding and mixin boilerplate ready to go.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span></div>
+            <span class="mc-ver">1.21+</span>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Fabric Mod"]'>
+          <div class="card-top">
+            <span class="card-icon">🔡</span>
+            <div class="card-meta">
+              <h3>CAPSlock</h3>
+              <p class="card-desc">Silently fixes capitalization on outgoing chat messages. No yelling. Works on slash commands too.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span></div>
+            <span class="mc-ver">1.21.11+</span>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Fabric Mod"]'>
+          <div class="card-top">
+            <span class="card-icon">📝</span>
+            <div class="card-meta">
+              <h3>Noted</h3>
+              <p class="card-desc">In-game note-taking client mod. Jot things without alt-tabbing. Notes persist across sessions.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span></div>
+            <span class="mc-ver">1.21+</span>
+          </div>
+        </article>
+
+        <article class="card" data-tags='["Fabric Mod"]'>
+          <div class="card-top">
+            <span class="card-icon">🕐</span>
+            <div class="card-meta">
+              <h3>ptime</h3>
+              <p class="card-desc">Client-side player time control. Set your own visual time of day without affecting the server or other players.</p>
+            </div>
+          </div>
+          <div class="card-bottom">
+            <div class="tags"><span class="tag fabric">Fabric Mod</span></div>
+            <span class="mc-ver">1.21+</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Matt_Lawliet &middot; <span class="accent">matt.dev</span></p>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
