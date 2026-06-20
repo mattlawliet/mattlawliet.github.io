@@ -292,6 +292,7 @@ body {
 .tag.fabric    { background: var(--fabric-bg); color: var(--fabric); }
 .tag.paper     { background: var(--paper-bg);  color: var(--paper);  }
 .tag.published { background: var(--accent-dim); color: var(--accent); }
+.tag.pending   { background: rgba(230, 180, 60, 0.15); color: #e6b43c; }
 
 .mc-ver {
   font-size: 10px;
