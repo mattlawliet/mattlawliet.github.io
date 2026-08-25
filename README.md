@@ -75,11 +75,17 @@ Installs a `post-commit` hook in every project with a git repo and a `source`
 path. It fires only when a commit touches a version file **and** the new
 version is stable, then syncs and commits the site.
 
-It does **not** push. Publishing is outward-facing, so that is opt-in:
+**Installed and armed since 2026-08-25.** A stable version bump in any of the
+eight hooked projects commits *and pushes* the site with no further
+confirmation — the release is public about a minute later. To bump a version
+without publishing:
 
 ```bash
-MATTDEV_AUTOPUSH=1 git commit -m "release 2.4.0"
+MATTDEV_NOPUSH=1 git commit -m "release 2.4.0"
 ```
+
+Hooked: shopah, deathchestreborn, superutilities, wtf, capslock, noted, ptime,
+parakon.
 
 Projects without git (CAPSlock had none before publishing, ForkPaperFix still
 does not) need `./sync.py` run by hand.
