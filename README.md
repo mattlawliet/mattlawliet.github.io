@@ -87,8 +87,10 @@ MATTDEV_NOPUSH=1 git commit -m "release 2.4.0"
 Hooked: shopah, deathchestreborn, superutilities, wtf, capslock, noted, ptime,
 parakon.
 
-Projects without git (CAPSlock had none before publishing, ForkPaperFix still
-does not) need `./sync.py` run by hand.
+Not hooked, so they need `./sync.py` by hand: **ForkPaperFix** (no git repo),
+and **Art Snap** / **Death On The Spot** (no local source). Modrinth download
+counts also drift with no commit to trigger on, so an occasional manual sync is
+worth running regardless.
 
 ## Adding a project
 
