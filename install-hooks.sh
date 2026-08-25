@@ -64,17 +64,23 @@ changed=\$(git diff-tree --no-commit-id --name-only -r HEAD | grep -E "\$VERSION
 [ -n "\$changed" ] || exit 0
 
 cd "$SITE" || exit 0
-out=\$(./sync.py $id 2>&1) || true
+# Capture the exit code directly: "|| true" would reset \$? to 0 and the
+# release check below would never fire.
+set +e
+out=\$(./sync.py $id 2>&1)
 status=\$?
+set -e
 
 if [ \$status -eq 2 ]; then
   echo "\$out" | sed 's/^/  [site] /'
   git add projects.json
   git commit -q -m "chore(site): $id release from \$(basename "$path")" || true
-  if [ -n "\${MATTDEV_AUTOPUSH:-}" ]; then
-    git push -q && echo "  [site] pushed"
+  if [ -n "\${MATTDEV_NOPUSH:-}" ]; then
+    echo "  [site] committed, push held (MATTDEV_NOPUSH) — 'git -C $SITE push' when ready"
+  elif git push -q 2>/dev/null; then
+    echo "  [site] pushed — live in ~1 min"
   else
-    echo "  [site] committed — run 'git -C $SITE push' to publish"
+    echo "  [site] committed, push failed — 'git -C $SITE push' to retry"
   fi
 fi
 HOOK
@@ -85,4 +91,5 @@ done
 [ "$MODE" = "--list" ] && exit 0
 echo
 echo "Hooks fire only when a commit touches a version file AND the new version"
-echo "is stable. Set MATTDEV_AUTOPUSH=1 to push automatically."
+echo "is stable. They publish to the live site automatically."
+echo "Set MATTDEV_NOPUSH=1 on a commit to hold the push back."
