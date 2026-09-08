@@ -49,6 +49,10 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [What the hero becomes](tickets/T04-what-the-hero-becomes.md): the avatar is replaced
+  by Matt's own Rimuru mask, rendered live and turning toward the cursor, plus a quiet
+  `774 downloads · 8 published · 14 projects` line. The number stays small on purpose;
+  displayed large it would read as thin rather than proud.
 - [What a pasted link looks like](tickets/T12-share-previews.md): every project gets a
   real URL at `/p/<id>/` with its own rendered 1200×630 card — its Minecraft item, name
   in rarity colour, and download count. Written by `sync.py`, no build step; the cards

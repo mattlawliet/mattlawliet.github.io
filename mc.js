@@ -269,7 +269,7 @@ export function createStage(canvas) {
       } else {
         // blocks sit in the inventory pose so two faces always read; sprites face front
         const yaw = v.item.yaw;
-        const tilt = v.item.sprite || v.item.yaw === 0 ? 0 : -0.28;
+        const tilt = v.item.tilt ?? (v.item.sprite || v.item.yaw === 0 ? 0 : -0.28);
         // idle drifts barely at all; hover hands rotation over to the pointer
         const ty = yaw + (v.hot ? v.px * 0.5 : Math.sin(t * 0.45 + v.phase) * 0.14);
         const tx = tilt + (v.hot ? v.py * 0.22 : Math.sin(t * 0.6 + v.phase) * 0.06);

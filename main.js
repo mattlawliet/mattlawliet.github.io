@@ -80,6 +80,13 @@ function render() {
   const list = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
   grid.replaceChildren(...list.map(tile));
   document.getElementById('count').textContent = PROJECTS.length;
+
+  // Summed from projects.json rather than fetched: sync.py already keeps those counts
+  // current, and the alternative is eight API calls before the page can say anything.
+  const published = PROJECTS.filter((p) => p.downloads != null);
+  const total = published.reduce((n, p) => n + p.downloads, 0);
+  document.getElementById('tally').innerHTML =
+    `<b>${total.toLocaleString()}</b> downloads · ${published.length} published · ${PROJECTS.length} projects`;
 }
 
 /* ── the models behind the grid ───────────────────── */
@@ -88,6 +95,24 @@ async function mountModels() {
   const lib = await ensureStage();
   stage.showAll(!document.body.classList.contains('detail-open'));
   stage.clear();
+
+  // the hero mask: Matt's own model, same renderer, same cursor-follow as the tiles
+  const hero = document.getElementById('heroArt');
+  if (hero) {
+    lib.loadItem('models')
+      .then((item) => {
+        item.yaw = Math.PI;   // face-on, not the three-quarter inventory pose blocks use
+        item.tilt = 0;        // and level, since it reads as a portrait rather than an item
+        stage.add(hero, item, { scale: 0.72 });
+      })
+      .catch(() => {});
+    hero.addEventListener('pointerenter', () => stage.hot(hero, true));
+    hero.addEventListener('pointerleave', () => stage.hot(hero, false));
+    hero.addEventListener('pointermove', (e) => {
+      const r = hero.getBoundingClientRect();
+      stage.point(hero, ((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1);
+    });
+  }
 
   const wtf = grid.querySelector('.tile[data-id="wtf"]');
   const puck = wtf?.querySelector('.cursor-compass');
