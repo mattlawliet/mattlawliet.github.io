@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>card</title>
+<!--
+  Renders one 1200x630 share card. Not part of the site: tools/make-cards.sh drives
+  this with headless Chromium and writes og/<id>.png. Re-run it when a project's
+  name, download count or model changes.
+
+    tools/card.html?id=wtf     one project
+    tools/card.html?id=site    the site-wide card
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090d; --surface:#0e1117; --surface2:#141921; --border:#1c2535;
+  --text:#c8cdd8; --muted:#4a5264; --accent:#c4aaff;
+  --common:#ffffff; --uncommon:#ffff55; --rare:#55ffff; --epic:#ff55ff;
+}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{
+  background:
+    radial-gradient(120% 90% at 22% 12%, rgba(196,170,255,.10), transparent 58%),
+    linear-gradient(160deg, var(--surface2), var(--bg) 62%);
+  color:var(--text);
+  font-family:'Inter',system-ui,sans-serif;
+  position:relative;
+}
+/* the scanline texture the site opens with */
+body::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(to bottom,transparent 0 3px,rgba(0,0,0,.16) 3px 4px);
+}
+.wrap{position:relative;height:100%;display:grid;grid-template-columns:520px 1fr;align-items:center;padding:0 74px 0 40px;gap:24px}
+#art{width:100%;height:430px}
+.name{font-family:'JetBrains Mono',monospace;font-size:64px;line-height:1.06;letter-spacing:-.01em;margin-bottom:20px;word-break:break-word}
+.kind{font-family:'JetBrains Mono',monospace;font-size:19px;color:var(--muted);margin-bottom:26px}
+.blurb{font-size:23px;line-height:1.5;color:#9aa3b4;max-width:19ch;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.mark{position:absolute;left:74px;bottom:46px;font-family:'Press Start 2P',monospace;font-size:17px;color:#fff}
+.mark i{color:var(--accent);font-style:normal}
+.dl{position:absolute;right:74px;bottom:50px;font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--muted)}
+.r-common{color:var(--common)} .r-uncommon{color:var(--uncommon)}
+.r-rare{color:var(--rare)}     .r-epic{color:var(--epic)}
+/* site card: one big statement instead of a project */
+body.site .wrap{grid-template-columns:1fr;justify-items:center;text-align:center;padding:0 80px}
+body.site .name{font-family:'Press Start 2P',monospace;font-size:60px;margin-bottom:26px}
+body.site .blurb{max-width:30ch;font-size:25px}
+body.site #art{display:none}
+body.site .mark{display:none}   /* the wordmark is already the headline */
+canvas#gl{position:absolute;inset:0;width:1200px;height:630px;pointer-events:none}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="art"></div>
+    <div>
+      <div class="name" id="name"></div>
+      <div class="kind" id="kind"></div>
+      <div class="blurb" id="blurb"></div>
+    </div>
+  </div>
+  <div class="mark">Matt<i>.</i>dev</div>
+  <div class="dl" id="dl"></div>
+  <canvas id="gl"></canvas>
+
+<script type="module">
+const id = new URLSearchParams(location.search).get('id') ?? 'site';
+const RARITY = (d) => d == null ? 'common' : d >= 200 ? 'epic' : d >= 100 ? 'rare' : d >= 25 ? 'uncommon' : 'common';
+const $ = (s) => document.querySelector(s);
+
+const d = await fetch('/projects.json').then((r) => r.json());
+
+if (id === 'site') {
+  const total = d.projects.reduce((n, p) => n + (p.downloads || 0), 0);
+  document.body.classList.add('site');
+  $('#name').textContent = 'Matt.dev';
+  $('#blurb').textContent = 'Minecraft mods and plugins that fix what should have worked already.';
+  $('#dl').textContent = `${total.toLocaleString()} downloads · ${d.projects.length} projects`;
+  document.title = 'ready';
+} else {
+  const p = d.projects.find((x) => x.id === id);
+  const r = RARITY(p.downloads);
+  $('#name').className = `name r-${r}`;
+  $('#name').textContent = p.name;
+  $('#kind').textContent = `${p.kind}${p.mc ? ` · ${p.mc}` : ''}`;
+  $('#blurb').textContent = p.blurb;
+  $('#dl').textContent = p.downloads != null ? `${p.downloads.toLocaleString()} downloads` : 'matt_lawliet';
+
+  const mc = await import('/mc.js');
+  const stage = mc.createStage($('#gl'));
+  const item = p.models?.length ? await mc.loadCarousel(p.models) : await mc.loadItem(p.id);
+  stage.add($('#art'), item, { scale: p.models?.length ? 1 : 0.78, mode: 'detail' });
+  document.body.classList.add('detail-open');   // the renderer draws 'detail' views only in this state
+  // give the models a moment to settle before the screenshot is taken
+  setTimeout(() => { document.title = 'ready'; }, 1200);
+}
+</script>
+</body>
+</html>

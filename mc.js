@@ -13,7 +13,7 @@
 import * as THREE from 'https://unpkg.com/three@0.170.0/build/three.module.js';
 
 const FACES = ['east', 'west', 'up', 'down', 'south', 'north']; // BoxGeometry order
-const ASSETS = 'assets';
+const ASSETS = '/assets';   // pages are served from /p/<id>/ too, so never relative
 const texLoader = new THREE.TextureLoader();
 const texCache = new Map();
 
@@ -133,7 +133,7 @@ async function buildSprite(file) {
 }
 
 async function loadBBModel(file) {
-  const d = await fetch(file).then((r) => r.json());
+  const d = await fetch(file.startsWith('/') ? file : `/${file}`).then((r) => r.json());
   const src = d.textures?.[0]?.source;
   return {
     kind: 'model',

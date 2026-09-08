@@ -7,16 +7,41 @@ and it deploys.
 
 ```
 projects.json   the only source of truth for what appears on the site
-main.js         renders cards + detail rail from that file
-viewer.js       Blockbench .bbmodel viewer (loaded on demand)
+main.js         renders the grid and the project pages from that file
+mc.js           draws every project's Minecraft model, one WebGL context for the page
 style.css
-sync.py         updates projects.json from local sources + the Modrinth API
+sync.py         updates projects.json, stamps cache keys, writes the pages under p/
 install-hooks.sh  arms a post-commit hook in each project repo
+assets/         Minecraft models and textures, flattened ahead of time
 models/         .bbmodel files, textures embedded as data URIs
+og/             share cards, one per project plus one for the site
+p/<id>/         generated project pages — do not edit, see below
+tools/          card renderer; not part of the site
 ```
 
-Cards are **not** written in HTML. To change what the site shows, edit
+Tiles are **not** written in HTML. To change what the site shows, edit
 `projects.json` or run `./sync.py` — never `index.html`.
+
+A project's tile size and name colour come from its live download count: 200+ is
+epic, 100+ rare, 25+ uncommon. Nothing sets them by hand.
+
+## Project pages and share cards
+
+Every project has a real URL at `/p/<id>/` so a pasted link previews as itself
+rather than as the site. Those pages are **generated** — each is `index.html` with
+the block between the `og:` markers swapped out, written by `sync.py` on every run.
+Edit `index.html`; never edit anything under `p/`.
+
+The images they point at live in `og/` and are rendered by a browser, which
+`sync.py` cannot do:
+
+```bash
+python3 -m http.server 8137     # in one shell, from the repo root
+./tools/make-cards.sh           # in another
+```
+
+Re-run that when a project's name, download count or model changes. Stale cards
+still work, they just show an old number.
 
 ## Updating after a release
 

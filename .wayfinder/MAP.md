@@ -49,6 +49,10 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [What a pasted link looks like](tickets/T12-share-previews.md): every project gets a
+  real URL at `/p/<id>/` with its own rendered 1200×630 card — its Minecraft item, name
+  in rarity colour, and download count. Written by `sync.py`, no build step; the cards
+  are rendered separately by `tools/make-cards.sh` because they need a browser.
 - [The tooltip has no hover on a phone](tickets/T13-touch-tooltip.md): it does not exist
   on touch — a tap opens the page instead, which carries far more than a tooltip could.
   A deletion, not a replacement. Rare tiles also stopped hogging the full width on

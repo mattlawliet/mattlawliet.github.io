@@ -48,7 +48,7 @@ const status = (p) => STATUS[p.status] ?? 'Unreleased';
 // finished mounting, and both paths need the same stage rather than racing to make one.
 let stageReady = null;
 function ensureStage() {
-  stageReady ??= import(`./mc.js${ASSET_V ? `?v=${ASSET_V}` : ''}`).then((lib) => {
+  stageReady ??= import(`/mc.js${ASSET_V ? `?v=${ASSET_V}` : ''}`).then((lib) => {
     stage ??= lib.createStage(document.getElementById('gl'));
     return lib;
   });
@@ -233,7 +233,7 @@ const statRow = (pairs) =>
 async function openProject(id, push = true) {
   const p = PROJECTS.find((x) => x.id === id);
   if (!p) return;
-  if (push && location.hash !== `#/${id}`) history.pushState(null, '', `#/${id}`);
+  if (push && routedId() !== id) history.pushState(null, '', `/p/${id}/`);
   const r = RARITY(p.downloads);
   const many = p.models?.length > 1;
 
@@ -299,7 +299,7 @@ async function openProject(id, push = true) {
   }
 
   const { proj, vers } = await modrinth(p.modrinth);
-  if (location.hash !== `#/${id}`) return; // navigated away while fetching
+  if (routedId() !== id) return; // navigated away while fetching
   if (!proj) { rest.innerHTML = '<p class="d-note">Could not reach Modrinth just now.</p>'; return; }
 
   links.innerHTML = [
@@ -361,19 +361,26 @@ function wireCarousel(p) {
 }
 
 function closeProject() {
-  if (location.hash) history.pushState(null, '', location.pathname + location.search);
+  if (routedId()) history.pushState(null, '', '/');
   document.body.classList.remove('detail-open');
   if (detailArt) { stage?.remove(detailArt); detailArt = null; }
   stage?.showAll(true);
 }
 
-function routeFromHash() {
-  const id = location.hash.replace(/^#\//, '');
+// A project page is a real URL — /p/wtf/ — so a pasted link can carry its own preview.
+// The old #/wtf form still resolves, for links shared before this existed.
+function routedId() {
+  const m = location.pathname.match(/^\/p\/([^/]+)\/?$/);
+  return m ? m[1] : location.hash.replace(/^#\//, '');
+}
+
+function route() {
+  const id = routedId();
   if (id && PROJECTS.some((x) => x.id === id)) openProject(id, false);
   else closeProject();
 }
 
-addEventListener('popstate', routeFromHash);
+addEventListener('popstate', route);
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   if (document.body.classList.contains('detail-open')) closeProject();
@@ -382,14 +389,14 @@ addEventListener('keydown', (e) => {
 
 /* ── boot ─────────────────────────────────────────── */
 
-fetch('projects.json')
+fetch('/projects.json')
   .then((r) => r.json())
   .then((d) => {
     PROJECTS = d.projects;
     top = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0))[0]?.id;
     render();
     mountModels().catch(() => {});
-    if (location.hash) routeFromHash();
+    route();
   })
   .catch(() => {
     grid.innerHTML = '<p class="load-fail">Could not load projects. Try a refresh.</p>';
