@@ -19,7 +19,6 @@ let PROJECTS = [];
 let top = null;
 let stage = null;
 let detailArt = null;
-let pinned = null;
 
 const STATUS = {
   published: 'Published',
@@ -120,7 +119,10 @@ async function mountModels() {
 
 /* ── tooltip ──────────────────────────────────────── */
 
-const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+// Checked per event, not once: a hybrid laptop has both a trackpad and a touchscreen,
+// and which one is in use can change between interactions.
+const finePointer = matchMedia('(hover:hover) and (pointer:fine)');
+const fine = () => finePointer.matches;
 
 function showTip(el) {
   const p = PROJECTS.find((x) => x.id === el.dataset.id);
@@ -146,7 +148,6 @@ function showTip(el) {
 function hideTip() {
   tip.classList.remove('show');
   tip.setAttribute('aria-hidden', 'true');
-  pinned = null;
 }
 
 function place(el) {
@@ -162,22 +163,23 @@ function place(el) {
 
 const target = (e) => e.target.closest('.tile');
 
-grid.addEventListener('pointerover', (e) => { if (fine) { const t = target(e); if (t) showTip(t); } });
+// The tooltip is a pointer affordance and stays one. On touch it does not appear at
+// all: a tap opens the project page, which carries everything the tooltip showed and
+// the whole public record besides. Keyboard focus still summons it.
+grid.addEventListener('pointerover', (e) => { if (fine()) { const t = target(e); if (t) showTip(t); } });
 grid.addEventListener('pointerout', (e) => {
   const t = target(e);
-  if (fine && !pinned && t && !t.contains(e.relatedTarget)) hideTip();
+  if (fine() && t && !t.contains(e.relatedTarget)) hideTip();
 });
 grid.addEventListener('focusin', (e) => { const t = target(e); if (t) showTip(t); });
-grid.addEventListener('focusout', () => { if (!pinned) hideTip(); });
+grid.addEventListener('focusout', hideTip);
 grid.addEventListener('click', (e) => {
   const t = target(e);
   if (!t) return;
-  // touch has no hover: the first tap reveals the tooltip, the second opens the page
-  if (!fine && pinned !== t.dataset.id) { pinned = t.dataset.id; showTip(t); return; }
   hideTip();
   openProject(t.dataset.id);
 });
-addEventListener('scroll', () => pinned && hideTip(), { passive: true });
+addEventListener('scroll', hideTip, { passive: true });
 
 /* ── project pages ────────────────────────────────── */
 

@@ -392,10 +392,16 @@ body.detail-open #detail { display: block; }
   .hero { padding: 44px 18px 38px; }
   .hero-inner { gap: 22px; }
   .projects-section { padding: 34px 18px 50px; }
-  #grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 170px; }
+  #grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 172px; }
+  /* only the epic tile earns the full width on a phone; rare tiles pair up instead,
+     which halves the scroll and gives the grid a rhythm rather than a stack */
   .tile.big { grid-column: span 2; grid-row: span 2; }
-  .tile.wide { grid-column: span 2; }
+  .tile.wide { grid-column: span 1; }
+  .tile.wide .bl { display: none; }
   .tile.big .nm { font-size: 19px; }
+  .tile { padding: 14px 15px; }
+  .tile .nm { font-size: 12px; overflow-wrap: anywhere; }
+  .tile .dl { font-size: 10px; }
   .foot { padding: 26px 18px 34px; }
   .foot .attrib { margin-left: 0; }
 }

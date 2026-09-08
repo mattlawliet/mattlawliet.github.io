@@ -49,6 +49,10 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [The tooltip has no hover on a phone](tickets/T13-touch-tooltip.md): it does not exist
+  on touch — a tap opens the page instead, which carries far more than a tooltip could.
+  A deletion, not a replacement. Rare tiles also stopped hogging the full width on
+  phones, cutting about a third off the scroll.
 - [Whose assets are these](tickets/T11-mojang-assets.md): **ship with Mojang's assets**,
   decided without the research running and against a raised concern — a footer
   attribution line is the only mitigation. The swap to Matt's own art stays cheap.
