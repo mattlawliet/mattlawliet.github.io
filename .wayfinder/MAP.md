@@ -49,6 +49,9 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [Whose assets are these](tickets/T11-mojang-assets.md): **ship with Mojang's assets**,
+  decided without the research running and against a raised concern — a footer
+  attribution line is the only mitigation. The swap to Matt's own art stays cheap.
 - [From rail to page](tickets/T02-rail-to-page.md): clicking opens a full-viewport page
   carrying the entire live Modrinth record — stats, gallery with captions, body,
   version table — at hash routes (`#/wtf`), with a wide 3D carousel for multi-model

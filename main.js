@@ -1,194 +1,393 @@
-// Same cache key as the <script> tag, so viewer.js can't go stale on its own.
+// Renders the project grid and the project pages from projects.json.
+//
+// projects.json stays the only source of truth for what appears here; nothing about a
+// project is written into this file or into index.html. Everything a published project
+// says about itself beyond that — stats, gallery, description, versions — is fetched
+// live from Modrinth when its page is opened.
+
+// Same cache key as the <script> tag, so mc.js can't go stale on its own.
 const ASSET_V = new URL(import.meta.url).searchParams.get('v') ?? '';
 
 const grid = document.getElementById('grid');
-const filterBar = document.getElementById('filters');
-const rail = document.getElementById('rail');
-const scrim = document.getElementById('scrim');
+const tip = document.getElementById('tip');
+const detail = document.getElementById('detail');
+
+const API = 'https://api.modrinth.com/v2';
+const apiCache = new Map();
 
 let PROJECTS = [];
-let active = null;
-let disposeViewer = null;
+let top = null;
+let stage = null;
+let detailArt = null;
+let pinned = null;
 
 const STATUS = {
-  published: { label: 'Published', cls: 'ok' },
-  'in-review': { label: 'In review', cls: 'wait' },
-  source: { label: 'Source available', cls: 'src' },
-  local: { label: 'Unreleased', cls: 'idle' },
+  published: 'Published',
+  'in-review': 'In review',
+  source: 'Source available',
+  local: 'Unreleased',
 };
 
-const KIND = { 'Fabric Mod': 'fabric', 'Paper Plugin': 'paper', Tool: 'tool', '3D Art': 'art' };
+// Live download count decides an item's rarity, which drives both its colour and how
+// much room its tile gets. Unreleased projects have no count and stay common.
+const RARITY = (d) =>
+  d == null ? 'common' : d >= 200 ? 'epic' : d >= 100 ? 'rare' : d >= 25 ? 'uncommon' : 'common';
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]
   );
 
-function card(p) {
-  const st = STATUS[p.status] ?? STATUS.local;
+const num = (n) => (n == null ? '—' : n.toLocaleString());
+const date = (s) =>
+  s ? new Date(s).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : '—';
+const range = (a) => (!a?.length ? '—' : a.length === 1 ? a[0] : `${a[0]} – ${a[a.length - 1]}`);
+
+const status = (p) => STATUS[p.status] ?? 'Unreleased';
+
+// One shared promise for the renderer: a deep link opens a page before the grid has
+// finished mounting, and both paths need the same stage rather than racing to make one.
+let stageReady = null;
+function ensureStage() {
+  stageReady ??= import(`./mc.js${ASSET_V ? `?v=${ASSET_V}` : ''}`).then((lib) => {
+    stage ??= lib.createStage(document.getElementById('gl'));
+    return lib;
+  });
+  return stageReady;
+}
+
+/* ── grid ─────────────────────────────────────────── */
+
+function tile(p) {
+  const r = RARITY(p.downloads);
+  const size = r === 'epic' ? 'big' : r === 'rare' ? 'wide' : '';
   const el = document.createElement('button');
-  el.className = 'card';
   el.type = 'button';
-  el.dataset.kind = p.kind;
+  el.className = `tile ${size} ${p.downloads == null ? 'unreleased' : ''}`.trim();
   el.dataset.id = p.id;
-  el.setAttribute('aria-label', `${p.name} — open details`);
+  el.dataset.r = r;
+  el.setAttribute('aria-label', `${p.name} — ${p.kind}, ${status(p)}`);
   el.innerHTML = `
-    <span class="slot" aria-hidden="true">${esc(p.icon)}</span>
-    <span class="card-body">
-      <span class="card-head">
-        <span class="card-name">${esc(p.name)}</span>
-        <span class="dot ${st.cls}" title="${st.label}"></span>
-      </span>
-      <span class="card-blurb">${esc(p.blurb)}</span>
-      <span class="card-foot">
-        <span class="chip ${KIND[p.kind] ?? 'tool'}">${esc(p.kind)}</span>
-        ${p.version ? `<span class="ver">v${esc(p.version)}</span>` : ''}
-        ${p.downloads ? `<span class="dl">${p.downloads.toLocaleString()}&nbsp;↓</span>` : ''}
-      </span>
-    </span>`;
-  el.addEventListener('click', () => open(p.id));
+    ${p.id === top ? '<span class="glint-tag">most downloaded</span>' : ''}
+    <span class="art"></span>
+    ${p.id === 'wtf' ? '<span class="cursor-compass"></span>' : ''}
+    <span class="nm r-${r}">${esc(p.name)}</span>
+    <span class="bl">${esc(p.blurb)}</span>
+    <span class="dl">${p.downloads != null ? `${p.downloads.toLocaleString()} downloads` : esc(status(p))}</span>`;
   return el;
 }
 
-function row(k, v) {
-  return v == null || v === '' ? '' : `<div class="row"><dt>${esc(k)}</dt><dd>${v}</dd></div>`;
+function render() {
+  const list = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+  grid.replaceChildren(...list.map(tile));
+  document.getElementById('count').textContent = PROJECTS.length;
 }
 
-function open(id) {
+/* ── the models behind the grid ───────────────────── */
+
+async function mountModels() {
+  const lib = await ensureStage();
+  stage.showAll(!document.body.classList.contains('detail-open'));
+  stage.clear();
+
+  const wtf = grid.querySelector('.tile[data-id="wtf"]');
+  const puck = wtf?.querySelector('.cursor-compass');
+  if (puck) lib.loadItem('wtf-compass').then((i) => stage.add(puck, i, { mode: 'compass', scale: 1.15 }));
+
+  for (const t of grid.querySelectorAll('.tile')) {
+    const art = t.querySelector('.art');
+    lib.loadItem(t.dataset.id)
+      .then((item) => stage.add(art, item, { scale: t.classList.contains('big') ? 0.68 : 1 }))
+      .catch(() => {});
+
+    t.addEventListener('pointerenter', () => stage.hot(art, true));
+    t.addEventListener('pointerleave', () => {
+      stage.hot(art, false);
+      if (puck && t === wtf) stage.show(puck, false);
+    });
+    t.addEventListener('pointermove', (e) => {
+      const r = art.getBoundingClientRect();
+      stage.point(art, ((e.clientX - r.left) / r.width) * 2 - 1, ((e.clientY - r.top) / r.height) * 2 - 1);
+      if (!puck || t !== wtf) return;
+      // the compass rides the cursor and keeps its needle on the shulker box
+      const tr = wtf.getBoundingClientRect();
+      puck.style.transform = `translate(${e.clientX - tr.left - 38}px, ${e.clientY - tr.top - 38}px)`;
+      stage.aim(puck, Math.atan2(-(r.left + r.width / 2 - e.clientX), -(r.top + r.height / 2 - e.clientY)));
+      stage.show(puck, true);
+    });
+  }
+}
+
+/* ── tooltip ──────────────────────────────────────── */
+
+const fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+
+function showTip(el) {
+  const p = PROJECTS.find((x) => x.id === el.dataset.id);
+  if (!p) return;
+  const r = RARITY(p.downloads);
+  const stats = [
+    p.version && `v${esc(p.version)}`,
+    p.downloads != null && `${p.downloads.toLocaleString()} downloads`,
+    p.mc && esc(p.mc),
+  ].filter(Boolean);
+  tip.innerHTML = `
+    <div class="t-name r-${r}">${esc(p.name)}</div>
+    <div class="t-kind">${esc(p.kind)}</div>
+    <div class="t-lore">${esc(p.blurb)}</div>
+    ${stats.map((s) => `<div class="t-stat">${s}</div>`).join('')}
+    ${p.id === top ? '<div class="t-foot t-glint">Most downloaded</div>' : ''}
+    <div class="t-foot">${esc(status(p))}</div>`;
+  tip.classList.add('show');
+  tip.setAttribute('aria-hidden', 'false');
+  place(el);
+}
+
+function hideTip() {
+  tip.classList.remove('show');
+  tip.setAttribute('aria-hidden', 'true');
+  pinned = null;
+}
+
+function place(el) {
+  const r = el.getBoundingClientRect();
+  const t = tip.getBoundingClientRect();
+  let x = r.right + 12;
+  let y = r.top - 6;
+  if (x + t.width > innerWidth - 8) x = Math.max(8, r.left - t.width - 12);
+  if (y + t.height > innerHeight - 8) y = Math.max(8, innerHeight - t.height - 8);
+  tip.style.left = `${x}px`;
+  tip.style.top = `${y}px`;
+}
+
+const target = (e) => e.target.closest('.tile');
+
+grid.addEventListener('pointerover', (e) => { if (fine) { const t = target(e); if (t) showTip(t); } });
+grid.addEventListener('pointerout', (e) => {
+  const t = target(e);
+  if (fine && !pinned && t && !t.contains(e.relatedTarget)) hideTip();
+});
+grid.addEventListener('focusin', (e) => { const t = target(e); if (t) showTip(t); });
+grid.addEventListener('focusout', () => { if (!pinned) hideTip(); });
+grid.addEventListener('click', (e) => {
+  const t = target(e);
+  if (!t) return;
+  // touch has no hover: the first tap reveals the tooltip, the second opens the page
+  if (!fine && pinned !== t.dataset.id) { pinned = t.dataset.id; showTip(t); return; }
+  hideTip();
+  openProject(t.dataset.id);
+});
+addEventListener('scroll', () => pinned && hideTip(), { passive: true });
+
+/* ── project pages ────────────────────────────────── */
+
+// Modrinth bodies are plain markdown, so escape first and transform after: nothing from
+// the API reaches the DOM as HTML.
+function md(src) {
+  const inline = (t) =>
+    t
+      .replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, '<img src="$2" alt="$1" loading="lazy">')
+      .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>');
+  const out = [];
+  let para = [];
+  let list = [];
+  const flushP = () => { if (para.length) { out.push(`<p>${inline(para.join(' '))}</p>`); para = []; } };
+  const flushL = () => {
+    if (list.length) { out.push(`<ul>${list.map((i) => `<li>${inline(i)}</li>`).join('')}</ul>`); list = []; }
+  };
+  for (const raw of esc(src).split('\n')) {
+    const l = raw.trim();
+    if (!l) { flushL(); flushP(); continue; }
+    const h = l.match(/^(#{1,6})\s+(.*)$/);
+    if (h) { flushL(); flushP(); const n = h[1].length <= 2 ? 3 : 4; out.push(`<h${n}>${inline(h[2])}</h${n}>`); continue; }
+    const li = l.match(/^[-*]\s+(.*)$/);
+    if (li) { flushP(); list.push(li[1]); continue; }
+    flushL();
+    para.push(l);
+  }
+  flushL();
+  flushP();
+  return out.join('');
+}
+
+function modrinth(slug) {
+  if (!apiCache.has(slug)) {
+    apiCache.set(slug, Promise.all([
+      fetch(`${API}/project/${slug}`).then((r) => (r.ok ? r.json() : null)),
+      fetch(`${API}/project/${slug}/version`).then((r) => (r.ok ? r.json() : [])),
+    ]).then(([proj, vers]) => ({ proj, vers })).catch(() => ({ proj: null, vers: [] })));
+  }
+  return apiCache.get(slug);
+}
+
+const statRow = (pairs) =>
+  `<dl class="d-stats">${pairs
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => `<div class="d-stat"><dt>${esc(k)}</dt><dd>${v}</dd></div>`)
+    .join('')}</dl>`;
+
+async function openProject(id, push = true) {
   const p = PROJECTS.find((x) => x.id === id);
   if (!p) return;
-  active = id;
-  const st = STATUS[p.status] ?? STATUS.local;
-  const links = [
-    p.modrinth &&
-      `<a href="https://modrinth.com/${p.modrinth_type ?? 'mod'}/${esc(p.modrinth)}" target="_blank" rel="noopener">Modrinth</a>`,
-    p.github && `<a href="${esc(p.github)}" target="_blank" rel="noopener">Source</a>`,
-  ]
-    .filter(Boolean)
-    .join('');
+  if (push && location.hash !== `#/${id}`) history.pushState(null, '', `#/${id}`);
+  const r = RARITY(p.downloads);
+  const many = p.models?.length > 1;
 
-  rail.innerHTML = `
-    <div class="rail-top">
-      <span class="slot big" aria-hidden="true">${esc(p.icon)}</span>
-      <div>
-        <h3>${esc(p.name)}</h3>
-        <span class="chip ${KIND[p.kind] ?? 'tool'}">${esc(p.kind)}</span>
+  detail.innerHTML = `
+    <div class="d-wrap">
+      <button class="d-back">← All projects</button>
+      <div class="d-top${p.models?.length ? ' stacked' : ''}">
+        <div>
+          <div class="d-art${p.models?.length ? ' carousel' : ''}"></div>
+          ${many ? `
+            <div class="d-carousel-ctl">
+              <button class="c-prev" aria-label="Previous model">←</button>
+              <span class="d-cname">${esc(p.models[0].name)}</span>
+              <button class="c-next" aria-label="Next model">→</button>
+            </div>
+            <div class="d-dots">${p.models
+              .map((m, i) => `<button class="d-dot${i ? '' : ' on'}" data-i="${i}" aria-label="${esc(m.name)}"></button>`)
+              .join('')}</div>` : ''}
+        </div>
+        <div>
+          <h2 class="d-name r-${r}">${esc(p.name)}</h2>
+          <p class="d-kind">${esc(p.kind)} · ${esc(status(p))} · ${r}</p>
+          <p class="d-desc">${esc(p.detail || p.blurb)}</p>
+          <div class="d-links"></div>
+        </div>
       </div>
-      <button class="close" aria-label="Close details">&times;</button>
-    </div>
-    <p class="lead">${esc(p.blurb)}</p>
-    <p class="body">${esc(p.detail)}</p>
-    <dl class="manifest">
-      ${row('Status', `<span class="state ${st.cls}">${st.label}</span>`)}
-      ${row('Version', p.version ? `v${esc(p.version)}` : '<span class="muted">unreleased</span>')}
-      ${row('Target', esc(p.mc))}
-      ${row('Downloads', p.downloads ? p.downloads.toLocaleString() : null)}
-    </dl>
-    ${p.models?.length ? viewerMarkup(p.models) : ''}
-    ${links ? `<div class="rail-links">${links}</div>` : ''}`;
-
-  rail.querySelector('.close').addEventListener('click', close);
-  if (p.models?.length) initViewer(p.models);
-  document.body.classList.add('rail-open');
-  rail.hidden = false;
-  requestAnimationFrame(() => rail.classList.add('in'));
-  [...grid.children].forEach((c) => c.classList.toggle('sel', c.dataset.id === id));
-  rail.querySelector('.close').focus();
-}
-
-function viewerMarkup(models) {
-  return `
-    <div class="viewer">
-      <canvas id="stage" aria-label="3D model preview"></canvas>
-      <div class="viewer-tabs" role="tablist">
-        ${models
-          .map(
-            (m, i) =>
-              `<button role="tab" class="vt${i === 0 ? ' on' : ''}" data-file="${esc(m.file)}"
-                 aria-selected="${i === 0}">${esc(m.name)}</button>`
-          )
-          .join('')}
-      </div>
-      <p class="viewer-hint">Drag to rotate</p>
+      <div class="d-rest"><p class="d-note">Loading public data…</p></div>
     </div>`;
-}
 
-async function initViewer(models) {
-  const canvas = rail.querySelector('#stage');
-  const tabs = [...rail.querySelectorAll('.vt')];
-  let mod;
-  try {
-    mod = await import(`./viewer.js${ASSET_V ? `?v=${ASSET_V}` : ''}`);
-  } catch {
-    canvas.closest('.viewer').innerHTML = '<p class="viewer-fail">3D preview unavailable.</p>';
+  document.body.classList.add('detail-open');
+  detail.querySelector('.d-back').addEventListener('click', closeProject);
+  detail.scrollTop = 0;
+
+  // the page takes the shared canvas over from the grid
+  if (detailArt) stage?.remove(detailArt);
+  detailArt = detail.querySelector('.d-art');
+  ensureStage().then((lib) => {
+    stage.showAll(false);
+    if (detailArt !== detail.querySelector('.d-art')) return;   // a later page won the race
+    if (p.models?.length) {
+      lib.loadCarousel(p.models)
+        .then((item) => { stage.add(detailArt, item, { mode: 'detail' }); if (many) wireCarousel(p); })
+        .catch(() => {});
+    } else {
+      lib.loadItem(p.id).then((item) => stage.add(detailArt, item, { scale: 0.85, mode: 'detail' })).catch(() => {});
+    }
+  });
+
+  const rest = detail.querySelector('.d-rest');
+  const links = detail.querySelector('.d-links');
+
+  if (!p.modrinth) {
+    links.innerHTML = p.github ? `<a href="${esc(p.github)}" target="_blank" rel="noopener">Source on GitHub</a>` : '';
+    rest.innerHTML =
+      statRow([
+        ['Version', p.version ? `v${esc(p.version)}` : '—'],
+        ['Target', esc(p.mc)],
+        ['Status', esc(status(p))],
+      ]) +
+      `<p class="d-note">Not published on Modrinth, so there is no public record to pull.
+       Everything here comes from this site's own data.</p>`;
     return;
   }
-  const load = async (file) => {
-    disposeViewer?.();
-    disposeViewer = null;
-    try {
-      disposeViewer = await mod.mount(canvas, file);
-    } catch (err) {
-      canvas.closest('.viewer').innerHTML = `<p class="viewer-fail">Could not load model.</p>`;
-    }
+
+  const { proj, vers } = await modrinth(p.modrinth);
+  if (location.hash !== `#/${id}`) return; // navigated away while fetching
+  if (!proj) { rest.innerHTML = '<p class="d-note">Could not reach Modrinth just now.</p>'; return; }
+
+  links.innerHTML = [
+    `<a href="https://modrinth.com/${proj.project_type}/${esc(proj.slug)}" target="_blank" rel="noopener">Modrinth</a>`,
+    proj.source_url && `<a href="${esc(proj.source_url)}" target="_blank" rel="noopener">Source</a>`,
+    proj.issues_url && `<a href="${esc(proj.issues_url)}" target="_blank" rel="noopener">Issues</a>`,
+    proj.wiki_url && `<a href="${esc(proj.wiki_url)}" target="_blank" rel="noopener">Wiki</a>`,
+    proj.discord_url && `<a href="${esc(proj.discord_url)}" target="_blank" rel="noopener">Discord</a>`,
+  ].filter(Boolean).join('');
+
+  const gallery = (proj.gallery ?? []).slice().sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0));
+  rest.innerHTML =
+    statRow([
+      ['Downloads', num(proj.downloads)],
+      ['Followers', num(proj.followers)],
+      ['Latest', vers[0] ? `v${esc(vers[0].version_number)}` : '—'],
+      ['Releases', num(vers.length)],
+      ['Minecraft', esc(range(proj.game_versions))],
+      ['Loaders', esc((proj.loaders ?? []).join(', ') || '—')],
+      ['Environment', esc(
+        proj.server_side === 'unsupported' ? 'Client only'
+          : proj.client_side === 'unsupported' ? 'Server only' : 'Client & server')],
+      ['License', esc(proj.license?.id ?? '—')],
+      ['Published', date(proj.published)],
+      ['Updated', date(proj.updated)],
+    ]) +
+    (gallery.length
+      ? `<h3 class="d-h">Gallery</h3><div class="d-gal">${gallery
+          .map((g) => `<figure class="d-shot">
+            <img src="${esc(g.url)}" alt="${esc(g.title ?? '')}" loading="lazy">
+            ${g.title ? `<figcaption>${esc(g.title)}</figcaption>` : ''}</figure>`)
+          .join('')}</div>`
+      : '') +
+    (proj.body ? `<h3 class="d-h">About</h3><div class="d-body">${md(proj.body)}</div>` : '') +
+    (vers.length
+      ? `<h3 class="d-h">Versions</h3><div class="d-vers-wrap"><table class="d-vers">
+          <tr><th>Version</th><th>Minecraft</th><th>Loaders</th><th>Downloads</th><th>Published</th></tr>
+          ${vers.slice(0, 10).map((v) => `<tr>
+            <td>v${esc(v.version_number)}</td><td>${esc(range(v.game_versions))}</td>
+            <td>${esc((v.loaders ?? []).join(', '))}</td><td>${num(v.downloads)}</td>
+            <td>${date(v.date_published)}</td></tr>`).join('')}
+        </table></div>`
+      : '');
+}
+
+function wireCarousel(p) {
+  const label = detail.querySelector('.d-cname');
+  const dots = [...detail.querySelectorAll('.d-dot')];
+  let i = 0;
+  const go = (n) => {
+    i = (n + p.models.length) % p.models.length;
+    stage.index(detailArt, i);
+    label.textContent = p.models[i].name;
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
   };
-  tabs.forEach((t) =>
-    t.addEventListener('click', () => {
-      tabs.forEach((x) => {
-        x.classList.toggle('on', x === t);
-        x.setAttribute('aria-selected', x === t);
-      });
-      load(t.dataset.file);
-    })
-  );
-  load(tabs[0].dataset.file);
+  detail.querySelector('.c-prev').addEventListener('click', () => go(i - 1));
+  detail.querySelector('.c-next').addEventListener('click', () => go(i + 1));
+  dots.forEach((d) => d.addEventListener('click', () => go(+d.dataset.i)));
 }
 
-function close() {
-  disposeViewer?.();
-  disposeViewer = null;
-  active = null;
-  rail.classList.remove('in');
-  document.body.classList.remove('rail-open');
-  [...grid.children].forEach((c) => c.classList.remove('sel'));
-  setTimeout(() => {
-    if (!active) rail.hidden = true;
-  }, 220);
+function closeProject() {
+  if (location.hash) history.pushState(null, '', location.pathname + location.search);
+  document.body.classList.remove('detail-open');
+  if (detailArt) { stage?.remove(detailArt); detailArt = null; }
+  stage?.showAll(true);
 }
 
-function render(kind = 'all') {
-  grid.replaceChildren();
-  const list = PROJECTS.filter((p) => kind === 'all' || p.kind === kind);
-  list.forEach((p, i) => {
-    const el = card(p);
-    el.style.setProperty('--i', i);
-    grid.append(el);
-  });
-  grid.classList.toggle('empty', !list.length);
+function routeFromHash() {
+  const id = location.hash.replace(/^#\//, '');
+  if (id && PROJECTS.some((x) => x.id === id)) openProject(id, false);
+  else closeProject();
 }
 
-filterBar.addEventListener('click', (e) => {
-  const btn = e.target.closest('.filter');
-  if (!btn) return;
-  filterBar.querySelectorAll('.filter').forEach((f) => {
-    f.classList.toggle('active', f === btn);
-    f.setAttribute('aria-pressed', f === btn);
-  });
-  close();
-  render(btn.dataset.tag);
+addEventListener('popstate', routeFromHash);
+addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (document.body.classList.contains('detail-open')) closeProject();
+  else hideTip();
 });
 
-scrim.addEventListener('click', close);
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && active) close();
-});
+/* ── boot ─────────────────────────────────────────── */
 
 fetch('projects.json')
   .then((r) => r.json())
   .then((d) => {
     PROJECTS = d.projects;
+    top = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0))[0]?.id;
     render();
-    document.getElementById('count').textContent = PROJECTS.length;
+    mountModels().catch(() => {});
+    if (location.hash) routeFromHash();
   })
   .catch(() => {
     grid.innerHTML = '<p class="load-fail">Could not load projects. Try a refresh.</p>';

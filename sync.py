@@ -204,7 +204,7 @@ def bump_assets() -> bool:
         return False
     blob = b"".join(
         (ROOT / n).read_bytes()
-        for n in ("main.js", "style.css", "viewer.js")
+        for n in ("main.js", "style.css", "mc.js")
         if (ROOT / n).is_file()
     )
     digest = hashlib.md5(blob).hexdigest()[:8]
