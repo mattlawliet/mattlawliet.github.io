@@ -49,6 +49,10 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [Can we hotlink the Modrinth galleries?](tickets/T03-modrinth-gallery-ingestion.md):
+  **no — mirror them.** `sync.py` copies each gallery into `assets/gallery/<id>/` with
+  captions (19 images, 1.7 MB) and deletes what disappears upstream. The favicon came
+  with it, so nothing on the page loads from another domain but fonts and three.js.
 - [Three tiers and a search box](tickets/T05-tiers-and-search.md): three labelled tiers —
   Published / Source available / In the workshop — derived from `status`, as headings
   over the existing sorted grid rather than filters. **Search dropped**, reversing the

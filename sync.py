@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -192,9 +193,64 @@ def sync(project: dict, offline: bool) -> list[str]:
             vs = data.get("versions")
             if vs:
                 set_("modrinth_id", data.get("id"))
+            changes += mirror_gallery(project, data)
         elif project.get("status") == "in-review":
             print("  · still not public on Modrinth")
 
+    return changes
+
+
+def mirror_gallery(project: dict, data: dict) -> list[str]:
+    """Copy a project's Modrinth gallery into assets/gallery/ and record it.
+
+    The site used to point <img> straight at cdn.modrinth.com. That works until it
+    doesn't: a CDN is free to refuse requests that come from another domain, and the
+    URLs are not ours to depend on. These are Matt's own uploads, so keeping a copy
+    costs a few hundred kilobytes and removes the dependency entirely.
+
+    Captions and ordering come along, so the project page no longer needs the API to
+    draw its gallery — only for the live numbers.
+    """
+    gallery = sorted(data.get("gallery") or [], key=lambda g: g.get("ordering") or 0)
+    out = ROOT / "assets" / "gallery" / project["id"]
+    want, changes = [], []
+    for i, g in enumerate(gallery):
+        url = g.get("url")
+        if not url:
+            continue
+        ext = Path(urllib.parse.urlparse(url).path).suffix or ".png"
+        name = f"{i:02d}{ext}"
+        dest = out / name
+        if not dest.is_file():
+            try:
+                req = urllib.request.Request(url, headers={"User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=20) as r:
+                    blob = r.read()
+            except (urllib.error.URLError, TimeoutError) as e:
+                print(f"  ! gallery image unreachable ({e}) — keeping what we have")
+                return changes
+            out.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(blob)
+            changes.append(f"gallery: mirrored {name} ({len(blob) // 1024} KB)")
+        want.append({"file": f"assets/gallery/{project['id']}/{name}",
+                     "title": g.get("title") or ""})
+
+    # a picture removed on Modrinth should stop being served here too
+    if out.is_dir():
+        keep = {Path(w["file"]).name for w in want}
+        for stale in out.iterdir():
+            if stale.name not in keep:
+                stale.unlink()
+                changes.append(f"gallery: dropped {stale.name}")
+
+    if not want:
+        if project.pop("gallery", None) is not None:
+            changes.append("gallery: cleared")
+        return changes
+    if want != project.get("gallery"):
+        if not changes:
+            changes.append("gallery: captions or order changed")
+        project["gallery"] = want
     return changes
 
 

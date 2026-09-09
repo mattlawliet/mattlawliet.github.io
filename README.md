@@ -14,6 +14,7 @@ sync.py         updates projects.json, stamps cache keys, writes the pages under
 install-hooks.sh  arms a post-commit hook in each project repo
 assets/         Minecraft models and textures, flattened ahead of time
 models/         .bbmodel files, textures embedded as data URIs
+assets/gallery/ mirrored Modrinth gallery images, one folder per project
 og/             share cards, one per project plus one for the site
 p/<id>/         generated project pages — do not edit, see below
 tools/          card renderer; not part of the site
@@ -53,6 +54,9 @@ still work, they just show an old number.
 git add -A && git commit -m "chore: sync" && git push
 ```
 
+Nothing on the page loads from another domain except Google Fonts and the three.js
+module. Gallery images and the favicon are served from this repo.
+
 `sync.py` pulls, per project:
 
 - **version** — from the source tree, or from Modrinth when the project is
@@ -60,7 +64,10 @@ git add -A && git commit -m "chore: sync" && git push
 - **downloads** and **status** — Modrinth. An `approved`/`listed` project
   automatically flips from "In review" to "Published"
 - **mc** — the game version range Modrinth reports
-- a fresh **cache key** stamped onto `style.css` / `main.js` / `viewer.js`
+- **gallery** — every image mirrored into `assets/gallery/<id>/` with its caption,
+  so the project page draws it without touching Modrinth's CDN. An image removed
+  upstream is deleted here on the next sync
+- a fresh **cache key** stamped onto `style.css` / `main.js` / `mc.js`
 
 ### What counts as a release
 

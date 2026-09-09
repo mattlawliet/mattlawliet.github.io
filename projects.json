@@ -17,7 +17,13 @@
       "modrinth_type": "mod",
       "github": null,
       "source": null,
-      "modrinth_id": "TwpL00Cj"
+      "modrinth_id": "TwpL00Cj",
+      "gallery": [
+        {
+          "file": "assets/gallery/art-snap/00.webp",
+          "title": "Logo"
+        }
+      ]
     },
     {
       "id": "death-on-the-spot",
@@ -34,7 +40,13 @@
       "modrinth_type": "mod",
       "github": null,
       "source": null,
-      "modrinth_id": "8qSgB6gV"
+      "modrinth_id": "8qSgB6gV",
+      "gallery": [
+        {
+          "file": "assets/gallery/death-on-the-spot/00.webp",
+          "title": "Matt's plugins logo"
+        }
+      ]
     },
     {
       "id": "matt-mods",
@@ -68,7 +80,37 @@
       "modrinth_type": "mod",
       "github": null,
       "source": "~/Projects/codex/Shopah",
-      "modrinth_id": "6dXU7hI7"
+      "modrinth_id": "6dXU7hI7",
+      "gallery": [
+        {
+          "file": "assets/gallery/shopah/00.webp",
+          "title": "SHOPAH!"
+        },
+        {
+          "file": "assets/gallery/shopah/01.webp",
+          "title": "Attach a sign to a barrel or chest "
+        },
+        {
+          "file": "assets/gallery/shopah/02.webp",
+          "title": "The sign will ask for stuff"
+        },
+        {
+          "file": "assets/gallery/shopah/03.webp",
+          "title": "And the price"
+        },
+        {
+          "file": "assets/gallery/shopah/04.webp",
+          "title": "And... don't get nervous!"
+        },
+        {
+          "file": "assets/gallery/shopah/05.webp",
+          "title": "Get your stuff in the barrel! Quick! - or slow if you want..."
+        },
+        {
+          "file": "assets/gallery/shopah/06.png",
+          "title": "And profit!"
+        }
+      ]
     },
     {
       "id": "deathchestreborn",
@@ -90,7 +132,37 @@
         "1.3.0-1"
       ],
       "exclude_note": "abandoned line: both built 2026-05-25, 1.2.1 shipped after on 2026-05-26",
-      "modrinth_id": "PSQRLqVq"
+      "modrinth_id": "PSQRLqVq",
+      "gallery": [
+        {
+          "file": "assets/gallery/deathchestreborn/00.webp",
+          "title": "Death Chest Reborn!"
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/01.png",
+          "title": "Commands for powerful people o_o"
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/02.webp",
+          "title": "Lets say you're alive"
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/03.webp",
+          "title": "and you stop."
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/04.webp",
+          "title": "and- oh..."
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/05.png",
+          "title": "but you're good because..."
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/06.png",
+          "title": "Just like this mess"
+        }
+      ]
     },
     {
       "id": "forkinteractions",
@@ -141,7 +213,21 @@
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/wtf",
       "source": "~/Projects/vsc/wtf",
-      "modrinth_id": "K9EVYX86"
+      "modrinth_id": "K9EVYX86",
+      "gallery": [
+        {
+          "file": "assets/gallery/wtf/00.webp",
+          "title": "Interface"
+        },
+        {
+          "file": "assets/gallery/wtf/01.png",
+          "title": "Marker"
+        },
+        {
+          "file": "assets/gallery/wtf/02.png",
+          "title": "Inventory icons"
+        }
+      ]
     },
     {
       "id": "capslock",

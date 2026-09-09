@@ -358,7 +358,10 @@ async function openProject(id, push = true) {
     proj.discord_url && `<a href="${esc(proj.discord_url)}" target="_blank" rel="noopener">Discord</a>`,
   ].filter(Boolean).join('');
 
-  const gallery = (proj.gallery ?? []).slice().sort((a, b) => (a.ordering ?? 0) - (b.ordering ?? 0));
+  // The gallery is served from this repo, not Modrinth's CDN: sync.py mirrors the
+  // images and their captions into projects.json, so the API is only consulted for
+  // numbers that actually change.
+  const gallery = p.gallery ?? [];
   rest.innerHTML =
     statRow([
       ['Downloads', num(proj.downloads)],
@@ -377,7 +380,7 @@ async function openProject(id, push = true) {
     (gallery.length
       ? `<h3 class="d-h">Gallery</h3><div class="d-gal">${gallery
           .map((g) => `<figure class="d-shot">
-            <img src="${esc(g.url)}" alt="${esc(g.title ?? '')}" loading="lazy">
+            <img src="/${esc(g.file)}" alt="${esc(g.title ?? '')}" loading="lazy">
             ${g.title ? `<figcaption>${esc(g.title)}</figcaption>` : ''}</figure>`)
           .join('')}</div>`
       : '') +
