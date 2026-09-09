@@ -12,7 +12,9 @@ and adding a one-line gist to the map's *Decisions so far* linking the file.
 **Frontier** — what is takeable right now:
 
 ```sh
-grep -L 'status: closed' .wayfinder/tickets/*.md \
-  | xargs grep -l 'blocked-by: \[\]' \
-  | xargs grep -L 'assignee: .'
+python3 .wayfinder/frontier.py
 ```
+
+A ticket is takeable when it is open, unassigned, and every id in its `blocked-by`
+is closed. The obvious grep for `blocked-by: []` is wrong: it misses tickets whose
+blockers have since been resolved, which is most of them by the end.
