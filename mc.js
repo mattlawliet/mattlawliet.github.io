@@ -210,6 +210,9 @@ export async function loadItem(id) {
   scene.add(holder);
   const sprite = data.kind === 'sprite';
   const yaw = data.yaw ?? (sprite ? 0 : Math.PI + 0.62);
+  // start at rest in the right pose; otherwise the loop eases in from 0 and every
+  // model visibly swings into place on load
+  holder.rotation.y = yaw;
   return { scene, holder, sprite, yaw };
 }
 

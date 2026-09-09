@@ -49,6 +49,10 @@ Done when that site is live on `main`, not when it is specified.
   **real Minecraft models instead of emoji**, chosen semantically per project and
   rendered in one shared WebGL context. Idle drift, cursor-follow on hover, no loop
   spin. Hovering `wtf` puts a compass on the cursor pointing at the shulker box.
+- [Three tiers and a search box](tickets/T05-tiers-and-search.md): three labelled tiers —
+  Published / Source available / In the workshop — derived from `status`, as headings
+  over the existing sorted grid rather than filters. **Search dropped**, reversing the
+  charting decision: fourteen projects do not need finding, they need labelling.
 - [What the hero becomes](tickets/T04-what-the-hero-becomes.md): the avatar is replaced
   by Matt's own Rimuru mask, rendered live and turning toward the cursor, plus a quiet
   `774 downloads · 8 published · 14 projects` line. The number stays small on purpose;

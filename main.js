@@ -27,6 +27,14 @@ const STATUS = {
   local: 'Unreleased',
 };
 
+// Tiers come straight from `status`; there is no separate field, and the three
+// "local" projects happen to be exactly the ones that are not Minecraft mods.
+const TIERS = [
+  { label: 'Published', match: (p) => p.status === 'published' || p.status === 'in-review' },
+  { label: 'Source available', match: (p) => p.status === 'source' },
+  { label: 'In the workshop', match: (p) => true },
+];
+
 // Live download count decides an item's rarity, which drives both its colour and how
 // much room its tile gets. Unreleased projects have no count and stay common.
 const RARITY = (d) =>
@@ -77,8 +85,22 @@ function tile(p) {
 }
 
 function render() {
-  const list = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
-  grid.replaceChildren(...list.map(tile));
+  const left = [...PROJECTS].sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
+  const sections = [];
+  for (const t of TIERS) {
+    const mine = left.filter(t.match);
+    if (!mine.length) continue;
+    mine.forEach((p) => left.splice(left.indexOf(p), 1));
+    const sec = document.createElement('section');
+    sec.className = 'tier';
+    sec.innerHTML = `<h3 class="tier-h">${esc(t.label)}<span>${mine.length}</span></h3>`;
+    const g = document.createElement('div');
+    g.className = 'tier-grid';
+    g.append(...mine.map(tile));
+    sec.append(g);
+    sections.push(sec);
+  }
+  grid.replaceChildren(...sections);
   document.getElementById('count').textContent = PROJECTS.length;
 
   // Summed from projects.json rather than fetched: sync.py already keeps those counts
@@ -103,6 +125,7 @@ async function mountModels() {
       .then((item) => {
         item.yaw = Math.PI;   // face-on, not the three-quarter inventory pose blocks use
         item.tilt = 0;        // and level, since it reads as a portrait rather than an item
+        item.holder.rotation.set(0, item.yaw, 0);
         stage.add(hero, item, { scale: 0.72 });
       })
       .catch(() => {});

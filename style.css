@@ -168,8 +168,34 @@ body {
 }
 .legend b { font-weight: 400; }
 
-/* ── GRID ─ tiles sized by rarity ─────────────────── */
-#grid {
+/* ── GRID ─ tiles sized by rarity, grouped by what state they're in ── */
+#grid { display: flex; flex-direction: column; gap: 44px; }
+
+.tier-h {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.tier-h::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.tier-h span {
+  order: 3;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.tier-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
   grid-auto-rows: 236px;
@@ -395,7 +421,8 @@ body.detail-open #detail { display: block; }
   .hero-art { width: 104px; height: 104px; }
   .tally { font-size: 11.5px; }
   .projects-section { padding: 34px 18px 50px; }
-  #grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 172px; }
+  #grid { gap: 34px; }
+  .tier-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 172px; }
   /* only the epic tile earns the full width on a phone; rare tiles pair up instead,
      which halves the scroll and gives the grid a rhythm rather than a stack */
   .tile.big { grid-column: span 2; grid-row: span 2; }
