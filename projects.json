@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-08",
+  "generated": "2026-09-11",
   "note": "Edited by hand for copy; version/status/downloads are overwritten by sync.py. Keep `source` and `modrinth` accurate or sync skips the entry.",
   "projects": [
     {
@@ -122,7 +122,7 @@
       "mc": "1.21–1.21.11",
       "version": "1.2.1",
       "status": "published",
-      "downloads": 46,
+      "downloads": 48,
       "modrinth": "deathchestreborn",
       "modrinth_type": "mod",
       "github": null,
