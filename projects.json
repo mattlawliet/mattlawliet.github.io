@@ -119,10 +119,10 @@
       "kind": "Paper Plugin",
       "blurb": "Death inventories preserved in admin-registered chests, with GUI retrieval and storage limits.",
       "detail": "Saves inventory, armour and offhand on death, then serves it back from chests an admin registers. Chests can render as a custom model through a resource pack, pair into double chests with permission-gated expansion, and survive explosions. Storage limits are configurable per server.",
-      "mc": "1.21–1.21.11",
-      "version": "1.2.1",
+      "mc": "1.21–26.2",
+      "version": "1.3.0",
       "status": "published",
-      "downloads": 48,
+      "downloads": 49,
       "modrinth": "deathchestreborn",
       "modrinth_type": "mod",
       "github": null,
@@ -144,22 +144,26 @@
         },
         {
           "file": "assets/gallery/deathchestreborn/02.webp",
-          "title": "Lets say you're alive"
+          "title": "Customizable clientside reskin (OPTIONAL)"
         },
         {
           "file": "assets/gallery/deathchestreborn/03.webp",
-          "title": "and you stop."
+          "title": "Lets say you're alive"
         },
         {
           "file": "assets/gallery/deathchestreborn/04.webp",
+          "title": "and you stop."
+        },
+        {
+          "file": "assets/gallery/deathchestreborn/05.webp",
           "title": "and- oh..."
         },
         {
-          "file": "assets/gallery/deathchestreborn/05.png",
+          "file": "assets/gallery/deathchestreborn/06.png",
           "title": "but you're good because..."
         },
         {
-          "file": "assets/gallery/deathchestreborn/06.png",
+          "file": "assets/gallery/deathchestreborn/07.png",
           "title": "Just like this mess"
         }
       ]
