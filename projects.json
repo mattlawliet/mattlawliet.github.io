@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-16",
+  "generated": "2026-09-17",
   "note": "Edited by hand for copy; version/status/downloads are overwritten by sync.py. Keep `source` and `modrinth` accurate or sync skips the entry.",
   "projects": [
     {
@@ -212,7 +212,7 @@
       "mc": "26.1.2–26.2",
       "version": "2.3.1",
       "status": "published",
-      "downloads": 265,
+      "downloads": 270,
       "modrinth": "wtf",
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/wtf",
