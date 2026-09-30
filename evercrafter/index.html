@@ -79,9 +79,9 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
   </svg>
   <h1>Ever Crafter Plugins</h1>
 </header>
-<p class="sub">Paper <b>26.2</b> · live server · test server · latest release · checked <b>2026-09-30</b></p>
+<p class="sub" id="sub">Paper <b>26.2</b> · live server · test server · latest release · checked <b>2026-09-30</b></p>
 
-<div class="counts">
+<div class="counts" id="counts">
   <span class="ok">16 up to date</span>
   <span class="upd">4 updates</span>
   <span class="new">1 not deployed</span>
@@ -95,12 +95,13 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
   <table>
     <thead><tr><th>Plugin</th><th>Live</th><th class="t">Test</th><th>Latest</th><th class="s">Status</th></tr></thead>
     <tbody>
-      <tr><td><a href="https://mattlawliet.github.io/p/superutilities/">Super Utilities</a><small>Admin tools for land claims</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://mattlawliet.github.io/p/deathchestreborn/">Death Chest Reborn</a><small>Server-wide death storage, collected at spawn</small></td><td class="v none">?</td><td class="t v">1.3.0</td><td class="v">1.3.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://mattlawliet.github.io/p/shopah/">Shopah</a><small>Theft-proof sign shops</small></td><td class="v none">?</td><td class="t v">1.5.8</td><td class="v">1.5.8</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://mattlawliet.github.io/p/forkinteractions/">Fork Interactions</a><small>Anyone can pick up thrown non-loyalty tridents</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td>Essentially Offline<small>/enderchest and /invsee on offline players · not on the server yet</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill new">Not deployed</span></td></tr>
-      <tr><td><a href="https://github.com/mattlawliet/StableMaster">Stable Master</a> <span style="font-weight:400">(fork)</span><small>Camel bug was fixed by syncing the world clocks · test server still on upstream 1.2.0</small></td><td class="v">1.2.6</td><td class="t v">1.2.0</td><td class="v">1.2.6</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="SuperUtilities"><td><a href="https://mattlawliet.github.io/p/superutilities/">Super Utilities</a><small>Admin tools for land claims</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="DeathChestReborn"><td><a href="https://mattlawliet.github.io/p/deathchestreborn/">Death Chest Reborn</a><small>Server-wide death storage, collected at spawn</small></td><td class="v none">?</td><td class="t v">1.3.0</td><td class="v">1.3.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="Shopah"><td><a href="https://mattlawliet.github.io/p/shopah/">Shopah</a><small>Theft-proof sign shops</small></td><td class="v none">?</td><td class="t v">1.5.8</td><td class="v">1.5.8</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="ForkInteractions"><td><a href="https://mattlawliet.github.io/p/forkinteractions/">Fork Interactions</a><small>Anyone can pick up thrown non-loyalty tridents</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="EssentiallyOffline"><td>Essentially Offline<small>/enderchest and /invsee on offline players · not on the server yet</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill new">Not deployed</span></td></tr>
+      <tr data-live="StableMaster"><td><a href="https://github.com/mattlawliet/StableMaster">Stable Master</a> <span style="font-weight:400">(fork)</span><small>Camel bug was fixed by syncing the world clocks · test server still on upstream 1.2.0</small></td><td class="v">1.2.6</td><td class="t v">1.2.0</td><td class="v">1.2.6</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="PluginBeacon"><td>PluginBeacon<small>Reports the live server's plugins to this page</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill new">Not deployed</span></td></tr>
     </tbody>
   </table>
 </section>
@@ -110,44 +111,96 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
   <table>
     <thead><tr><th>Plugin</th><th>Live</th><th class="t">Test</th><th>Latest</th><th class="s">Status</th></tr></thead>
     <tbody>
-      <tr><td><a href="https://modrinth.com/plugin/customdiscs-plugin">Custom Discs</a></td><td class="v none">?</td><td class="t v">6.0.3</td><td class="v">6.0.4</td><td class="s"><span class="pill upd">Update</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/gsit">GSit</a></td><td class="v none">?</td><td class="t v">3.5.1</td><td class="v">3.7.0</td><td class="s"><span class="pill upd">Update</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/simple-voice-chat">Simple Voice Chat</a></td><td class="v none">?</td><td class="t v">2.6.23</td><td class="v">2.6.24</td><td class="s"><span class="pill upd">Update</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/worldguard">WorldGuard</a></td><td class="v none">?</td><td class="t v">7.0.18</td><td class="v">7.0.19</td><td class="s"><span class="pill upd">Update</span></td></tr>
+      <tr data-live="CustomDiscs"><td><a href="https://modrinth.com/plugin/customdiscs-plugin">Custom Discs</a></td><td class="v none">?</td><td class="t v">6.0.3</td><td class="v">6.0.4</td><td class="s"><span class="pill upd">Update</span></td></tr>
+      <tr data-live="GSit"><td><a href="https://modrinth.com/plugin/gsit">GSit</a></td><td class="v none">?</td><td class="t v">3.5.1</td><td class="v">3.7.0</td><td class="s"><span class="pill upd">Update</span></td></tr>
+      <tr data-live="voicechat"><td><a href="https://modrinth.com/plugin/simple-voice-chat">Simple Voice Chat</a></td><td class="v none">?</td><td class="t v">2.6.23</td><td class="v">2.6.24</td><td class="s"><span class="pill upd">Update</span></td></tr>
+      <tr data-live="WorldGuard"><td><a href="https://modrinth.com/plugin/worldguard">WorldGuard</a></td><td class="v none">?</td><td class="t v">7.0.18</td><td class="v">7.0.19</td><td class="s"><span class="pill upd">Update</span></td></tr>
 
-      <tr><td><a href="https://hangar.papermc.io/CoreProtect/CoreProtect">CoreProtect</a><small>26.2 support added 2026-09-24</small></td><td class="v none">?</td><td class="t v none">—</td><td class="v">24.1</td><td class="s"><span class="pill new">Available</span></td></tr>
+      <tr data-live="CoreProtect"><td><a href="https://hangar.papermc.io/CoreProtect/CoreProtect">CoreProtect</a><small>26.2 support added 2026-09-24</small></td><td class="v none">?</td><td class="t v none">—</td><td class="v">24.1</td><td class="s"><span class="pill new">Available</span></td></tr>
 
-      <tr><td>DiscordSRV Staff Chat<small>Crashes on enable · v1.4.6 is tagged but has no download</small></td><td class="v none">?</td><td class="t v">1.4.4</td><td class="v">1.4.4</td><td class="s"><span class="pill bad">Broken</span></td></tr>
-      <tr><td>Heads Database<small>Too old to enable · paid, latest not checked</small></td><td class="v none">?</td><td class="t v">4.23.0</td><td class="v none">?</td><td class="s"><span class="pill bad">Broken</span></td></tr>
+      <tr data-live="DiscordSRV-Staff-Chat"><td>DiscordSRV Staff Chat<small>Crashes on enable · v1.4.6 is tagged but has no download</small></td><td class="v none">?</td><td class="t v">1.4.4</td><td class="v">1.4.4</td><td class="s"><span class="pill bad">Broken</span></td></tr>
+      <tr data-live="HeadDatabase"><td>Heads Database<small>Too old to enable · paid, latest not checked</small></td><td class="v none">?</td><td class="t v">4.23.0</td><td class="v none">?</td><td class="s"><span class="pill bad">Broken</span></td></tr>
 
-      <tr><td><a href="https://modrinth.com/plugin/armor-poser-plugin">Armor Poser</a></td><td class="v none">?</td><td class="t v">2.1.1</td><td class="v">2.1.1</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/discordsrv">DiscordSRV</a></td><td class="v none">?</td><td class="t v">1.30.5</td><td class="v">1.30.5</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://github.com/EssentialsX/Essentials/releases">EssentialsX</a></td><td class="v none">?</td><td class="t v">2.22.0</td><td class="v">2.22.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/fastasyncworldedit">FastAsyncWorldEdit</a></td><td class="v none">?</td><td class="t v">2.15.4</td><td class="v">2.15.4</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/griefprevention">GriefPrevention</a></td><td class="v none">?</td><td class="t v">16.18.7</td><td class="v">16.18.7</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/luckperms">LuckPerms</a></td><td class="v none">?</td><td class="t v">5.5.71</td><td class="v">5.5.71</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/lwc">LWC Extended</a></td><td class="v none">?</td><td class="t v">2.4.2</td><td class="v">2.4.2</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/patpat">Pat Pat</a></td><td class="v none">?</td><td class="t v">1.2.5</td><td class="v">1.2.5</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/right-click-harvester">Right Click Harvest</a><small>Harvester</small></td><td class="v none">?</td><td class="t v">1.1</td><td class="v">1.1</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://github.com/LuciCMD/TabDeathCounter/releases">TabDeathCounter</a></td><td class="v none">?</td><td class="t v">1.1</td><td class="v">1.1</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td><a href="https://modrinth.com/plugin/vaultunlocked">Vault</a><small>VaultUnlocked</small></td><td class="v none">?</td><td class="t v">2.20.3</td><td class="v">2.20.3</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr><td>ImageMaps<small>Latest not checked</small></td><td class="v none">?</td><td class="t v">1.0.10</td><td class="v none">?</td><td class="s"><span class="pill ok">Installed</span></td></tr>
-      <tr><td>MineSpawners<small>Latest not checked</small></td><td class="v none">?</td><td class="t v">2.9</td><td class="v none">?</td><td class="s"><span class="pill ok">Installed</span></td></tr>
+      <tr data-live="ArmorPoser"><td><a href="https://modrinth.com/plugin/armor-poser-plugin">Armor Poser</a></td><td class="v none">?</td><td class="t v">2.1.1</td><td class="v">2.1.1</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="DiscordSRV"><td><a href="https://modrinth.com/plugin/discordsrv">DiscordSRV</a></td><td class="v none">?</td><td class="t v">1.30.5</td><td class="v">1.30.5</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="Essentials"><td><a href="https://github.com/EssentialsX/Essentials/releases">EssentialsX</a></td><td class="v none">?</td><td class="t v">2.22.0</td><td class="v">2.22.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="FastAsyncWorldEdit"><td><a href="https://modrinth.com/plugin/fastasyncworldedit">FastAsyncWorldEdit</a></td><td class="v none">?</td><td class="t v">2.15.4</td><td class="v">2.15.4</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="GriefPrevention"><td><a href="https://modrinth.com/plugin/griefprevention">GriefPrevention</a></td><td class="v none">?</td><td class="t v">16.18.7</td><td class="v">16.18.7</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="LuckPerms"><td><a href="https://modrinth.com/plugin/luckperms">LuckPerms</a></td><td class="v none">?</td><td class="t v">5.5.71</td><td class="v">5.5.71</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="LWC"><td><a href="https://modrinth.com/plugin/lwc">LWC Extended</a></td><td class="v none">?</td><td class="t v">2.4.2</td><td class="v">2.4.2</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="PatPatPlugin"><td><a href="https://modrinth.com/plugin/patpat">Pat Pat</a></td><td class="v none">?</td><td class="t v">1.2.5</td><td class="v">1.2.5</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="Harvester"><td><a href="https://modrinth.com/plugin/right-click-harvester">Right Click Harvest</a><small>Harvester</small></td><td class="v none">?</td><td class="t v">1.1</td><td class="v">1.1</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="TabDeathCounter"><td><a href="https://github.com/LuciCMD/TabDeathCounter/releases">TabDeathCounter</a><small>The 1.1 download reports itself as 1.0</small></td><td class="v none">?</td><td class="t v">1.0</td><td class="v">1.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="Vault"><td><a href="https://modrinth.com/plugin/vaultunlocked">Vault</a><small>VaultUnlocked</small></td><td class="v none">?</td><td class="t v">2.20.3</td><td class="v">2.20.3</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="ImageMaps"><td>ImageMaps<small>Latest not checked</small></td><td class="v none">?</td><td class="t v">1.0.10</td><td class="v none">?</td><td class="s"><span class="pill ok">Installed</span></td></tr>
+      <tr data-live="MineSpawners"><td>MineSpawners<small>Latest not checked</small></td><td class="v none">?</td><td class="t v">2.9</td><td class="v none">?</td><td class="s"><span class="pill ok">Installed</span></td></tr>
+      <tr data-live="packetevents"><td><a href="https://modrinth.com/plugin/packetevents">packetevents</a><small>Needed by Death Chest Reborn</small></td><td class="v none">?</td><td class="t v">2.13.0</td><td class="v">2.14.0</td><td class="s"><span class="pill upd">Update</span></td></tr>
 
-      <tr><td>Animal Blender</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Cristichi's Tree Capitator</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Custom Heads<small>by dlf Dragon</small></td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Death Messages Modern</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Hermitcraft spore blossom recipe</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>LWC Trust</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Never Too Expensive</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Pokes</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
-      <tr><td>Revaulting</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="AnimalBlender"><td>Animal Blender</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="TreeCapitator"><td>Cristichi's Tree Capitator</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="CustomHeads"><td>Custom Heads<small>by dlf Dragon</small></td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="DeathMessagesModern"><td>Death Messages Modern</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="SporeBlossom"><td>Hermitcraft spore blossom recipe</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="LWCTrust"><td>LWC Trust</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="NeverTooExpensive"><td>Never Too Expensive</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="Pokes"><td>Pokes</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
+      <tr data-live="Revaulting"><td>Revaulting</td><td class="v none">?</td><td class="t v none">—</td><td class="v none">—</td><td class="s"><span class="pill miss">Not found</span></td></tr>
     </tbody>
   </table>
 </section>
 
 <footer>"Not found" means there is no free download with an API (SpigotMC-only or paid). "?" in Live means not recorded yet.</footer>
 </main>
+<script>
+// The Live column comes from live.json, which the PluginBeacon plugin commits from the server.
+// ?data=test.json reads the test server's file instead.
+const file = new URLSearchParams(location.search).get('data');
+const DATA = 'https://raw.githubusercontent.com/mattlawliet/evercrafter-data/main/'
+  + (/^[\w-]+\.json$/.test(file ?? '') ? file : 'live.json');
+const norm = s => s.toLowerCase().replace(/_\d.*$/, '').replace(/[^a-z0-9]/g, '');
+const clean = v => v.replace(/^v/, '').split(/[+ ]/)[0];
+const LABELS = { 'Up to date': 'up to date', 'Update': 'updates', 'Not deployed': 'not deployed',
+  'Available': 'newly available', 'Broken': 'broken on 26.2', 'Installed': 'latest not checked',
+  'Not found': 'not found', 'Not on this page': 'not on this page' };
+
+function counts() {
+  const n = new Map();
+  for (const p of document.querySelectorAll('.pill')) {
+    const [cls, c] = n.get(p.textContent) ?? [p.classList[1], 0];
+    n.set(p.textContent, [cls, c + 1]);
+  }
+  document.getElementById('counts').innerHTML = [...n]
+    .map(([t, [cls, c]]) => `<span class="${cls}">${c} ${LABELS[t] ?? t}</span>`).join('');
+}
+
+fetch(DATA)
+  .then(r => r.ok ? r.json() : Promise.reject(r.status))
+  .then(data => {
+    const live = new Map(data.plugins.map(p => [norm(p.name), p]));
+    for (const tr of document.querySelectorAll('tr[data-live]')) {
+      const key = norm(tr.dataset.live), p = live.get(key), cell = tr.cells[1];
+      live.delete(key);
+      cell.textContent = p ? clean(p.version) + (p.enabled ? '' : ' (off)') : '—';
+      cell.classList.toggle('none', !p);
+      const latest = tr.cells[3].textContent.trim(), pill = tr.querySelector('.pill');
+      if (p && /\d/.test(latest) && ['Up to date', 'Update', 'Not deployed'].includes(pill.textContent)) {
+        const same = clean(p.version) === latest;
+        pill.className = 'pill ' + (same ? 'ok' : 'upd');
+        pill.textContent = same ? 'Up to date' : 'Update';
+      }
+    }
+    // installed on the server but missing from this page
+    const other = document.querySelector('section:last-of-type tbody');
+    for (const p of live.values()) {
+      const tr = other.insertRow();
+      for (const [cls, text] of [['', p.name], ['v', clean(p.version)], ['t v none', '?'], ['v none', '?'], ['s', '']])
+        Object.assign(tr.insertCell(), { className: cls, textContent: text });
+      tr.cells[4].innerHTML = '<span class="pill miss">Not on this page</span>';
+    }
+    document.getElementById('sub').insertAdjacentHTML('beforeend', ` · live reported <b>${data.reported.slice(0, 10)}</b>`);
+  })
+  .catch(() => {})
+  .finally(counts);
+</script>
 </body>
 </html>
