@@ -96,7 +96,7 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
     <thead><tr><th>Plugin</th><th>Live</th><th class="t">Test</th><th>Latest</th><th class="s">Status</th></tr></thead>
     <tbody>
       <tr data-live="SuperUtilities"><td><a href="https://mattlawliet.github.io/p/superutilities/">Super Utilities</a><small>Admin tools for land claims · 1.1+ adds /su owned, claims transfer</small></td><td class="v none">?</td><td class="t v">1.2.0</td><td class="v">1.2.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
-      <tr data-live="DeathChestReborn"><td><a href="https://mattlawliet.github.io/p/deathchestreborn/">Death Chest Reborn</a><small>Server-wide death storage, collected at spawn</small></td><td class="v none">?</td><td class="t v">1.3.0</td><td class="v">1.3.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
+      <tr data-live="DeathChestReborn"><td><a href="https://mattlawliet.github.io/p/deathchestreborn/">Death Chest Reborn</a><small>Server-wide death storage, collected at spawn</small></td><td class="v none">?</td><td class="t v">1.3.2</td><td class="v">1.3.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
       <tr data-live="Shopah"><td><a href="https://mattlawliet.github.io/p/shopah/">Shopah</a><small>Theft-proof sign shops · 1.6+ adds /shopah list, remove, transfer</small></td><td class="v none">?</td><td class="t v">1.7.0</td><td class="v">1.7.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
       <tr data-live="ForkInteractions"><td><a href="https://mattlawliet.github.io/p/forkinteractions/">Fork Interactions</a><small>Anyone can pick up thrown non-loyalty tridents</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill ok">Up to date</span></td></tr>
       <tr data-live="EssentiallyOffline"><td>Essentially Offline<small>/enderchest and /invsee on offline players · not on the server yet</small></td><td class="v none">?</td><td class="t v">1.0.0</td><td class="v">1.0.0</td><td class="s"><span class="pill new">Not deployed</span></td></tr>
@@ -152,13 +152,15 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
 <footer>"Not found" means there is no free download with an API (SpigotMC-only or paid). "?" in Live means not recorded yet.</footer>
 </main>
 <script>
-// The Live column comes from live.json, which the PluginBeacon plugin commits from the server.
-// ?data=test.json reads the test server's file instead.
-const file = new URLSearchParams(location.search).get('data');
-const DATA = 'https://raw.githubusercontent.com/mattlawliet/evercrafter-data/main/'
-  + (/^[\w-]+\.json$/.test(file ?? '') ? file : 'live.json');
+// PluginBeacon commits each server's plugin list: live.json from the live server fills Live,
+// test.json from the test server fills Test. If a file can't be fetched, the column keeps the
+// values written into this page.
+const DATA = 'https://raw.githubusercontent.com/mattlawliet/evercrafter-data/main/';
+const load = file => fetch(DATA + file).then(r => r.ok ? r.json() : Promise.reject(r.status));
+const rows = document.querySelectorAll('tr[data-live]');
 const norm = s => s.toLowerCase().replace(/_\d.*$/, '').replace(/[^a-z0-9]/g, '');
 const clean = v => v.replace(/^v/, '').split(/[+ ]/)[0];
+const shown = p => clean(p.version) + (p.enabled ? '' : ' (off)');
 const LABELS = { 'Up to date': 'up to date', 'Update': 'updates', 'Not deployed': 'not deployed',
   'Available': 'newly available', 'Broken': 'broken on 26.2', 'Installed': 'latest not checked',
   'Not found': 'not found', 'Not on this page': 'not on this page' };
@@ -173,15 +175,27 @@ function counts() {
     .map(([t, [cls, c]]) => `<span class="${cls}">${c} ${LABELS[t] ?? t}</span>`).join('');
 }
 
-fetch(DATA)
-  .then(r => r.ok ? r.json() : Promise.reject(r.status))
-  .then(data => {
-    const live = new Map(data.plugins.map(p => [norm(p.name), p]));
-    for (const tr of document.querySelectorAll('tr[data-live]')) {
-      const key = norm(tr.dataset.live), p = live.get(key), cell = tr.cells[1];
+// Writes one server's versions into column `col`; returns that server's plugins by name.
+function fill(data, col, server) {
+  const byName = new Map(data.plugins.map(p => [norm(p.name), p]));
+  for (const tr of rows) {
+    const p = byName.get(norm(tr.dataset.live)), cell = tr.cells[col];
+    cell.textContent = p ? shown(p) : '—';
+    cell.classList.toggle('none', !p);
+  }
+  document.getElementById('sub').insertAdjacentHTML('beforeend',
+    ` · ${server} reported <b>${data.reported.slice(0, 10)}</b>`);
+  return byName;
+}
+
+Promise.allSettled([load('live.json'), load('test.json')])
+  .then(([liveRes, testRes]) => {
+    const test = testRes.status === 'fulfilled' ? fill(testRes.value, 2, 'test') : new Map();
+    if (liveRes.status !== 'fulfilled') return;
+    const live = fill(liveRes.value, 1, 'live');
+    for (const tr of rows) {
+      const key = norm(tr.dataset.live), p = live.get(key);
       live.delete(key);
-      cell.textContent = p ? clean(p.version) + (p.enabled ? '' : ' (off)') : '—';
-      cell.classList.toggle('none', !p);
       const latest = tr.cells[3].textContent.trim(), pill = tr.querySelector('.pill');
       if (p && /\d/.test(latest) && ['Up to date', 'Update', 'Not deployed'].includes(pill.textContent)) {
         const same = clean(p.version) === latest;
@@ -189,17 +203,16 @@ fetch(DATA)
         pill.textContent = same ? 'Up to date' : 'Update';
       }
     }
-    // installed on the server but missing from this page
+    // installed on the live server but missing from this page
     const other = document.querySelector('section:last-of-type tbody');
-    for (const p of live.values()) {
-      const tr = other.insertRow();
-      for (const [cls, text] of [['', p.name], ['v', clean(p.version)], ['t v none', '?'], ['v none', '?'], ['s', '']])
+    for (const [key, p] of live) {
+      const t = test.get(key), tr = other.insertRow();
+      for (const [cls, text] of [['', p.name], ['v', shown(p)], [t ? 't v' : 't v none', t ? shown(t) : '?'],
+                                 ['v none', '?'], ['s', '']])
         Object.assign(tr.insertCell(), { className: cls, textContent: text });
       tr.cells[4].innerHTML = '<span class="pill miss">Not on this page</span>';
     }
-    document.getElementById('sub').insertAdjacentHTML('beforeend', ` · live reported <b>${data.reported.slice(0, 10)}</b>`);
   })
-  .catch(() => {})
   .finally(counts);
 </script>
 </body>
