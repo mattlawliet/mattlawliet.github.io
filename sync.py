@@ -70,7 +70,7 @@ def versions_in_tree(src: Path) -> set[str]:
 
     for p in list(src.glob("src/main/resources/plugin.yml")) + list(
         src.glob("src/main/resources/paper-plugin.yml")
-    ):
+    ) + list(src.glob("res/plugin.yml")):
         add(re.search(r"^version:\s*(.+)$", p.read_text(errors="ignore"), re.M))
 
     for p in src.glob("src/main/resources/fabric.mod.json"):
@@ -167,6 +167,7 @@ def sync(project: dict, offline: bool) -> list[str]:
             best = newest(found)
             if best:
                 set_("version", best)
+                project["_local"] = best
             elif found:
                 skipped = ", ".join(sorted(found))
                 print(f"  · no stable version yet (ignored: {skipped})")
@@ -197,6 +198,22 @@ def sync(project: dict, offline: bool) -> list[str]:
         elif project.get("status") == "in-review":
             print("  · still not public on Modrinth")
 
+    # `version` is what the public site shows: Modrinth wins. `latest` is the newest
+    # release that exists anywhere, local releases/ included; the Evercrafter plugin page
+    # reads it, since the server runs builds that may not be on Modrinth yet.
+    set_("latest", newest({project.pop("_local", None), project.get("version")} - {None}))
+    return changes
+
+
+def sync_unlisted(doc: dict) -> list[str]:
+    """`latest` for plugins that aren't site projects but are on the Evercrafter page."""
+    changes = []
+    for u in doc.get("unlisted", []):
+        path = Path(u["source"].replace("~", str(Path.home())))
+        best = newest(versions_in_tree(path)) if path.is_dir() else None
+        if best and u.get("latest") != best:
+            changes.append(f"{u['name']}: latest {u.get('latest')!r} -> {best!r}")
+            u["latest"] = best
     return changes
 
 
@@ -350,6 +367,9 @@ def main() -> int:
         for line in sync(p, args.offline):
             print(f"  {line}")
             total += 1
+    for line in sync_unlisted(doc):
+        print(f"unlisted: {line}")
+        total += 1
 
     if not total:
         print("\nno changes")

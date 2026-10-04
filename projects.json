@@ -12,7 +12,7 @@
       "mc": "1.21.10",
       "version": "1.2.4",
       "status": "published",
-      "downloads": 132,
+      "downloads": 139,
       "modrinth": "art-snap",
       "modrinth_type": "mod",
       "github": null,
@@ -23,7 +23,8 @@
           "file": "assets/gallery/art-snap/00.webp",
           "title": "Logo"
         }
-      ]
+      ],
+      "latest": "1.2.4"
     },
     {
       "id": "death-on-the-spot",
@@ -35,7 +36,7 @@
       "mc": "1.21.10",
       "version": "1.4.25",
       "status": "published",
-      "downloads": 106,
+      "downloads": 113,
       "modrinth": "death-on-the-spot",
       "modrinth_type": "mod",
       "github": null,
@@ -46,7 +47,8 @@
           "file": "assets/gallery/death-on-the-spot/00.webp",
           "title": "Matt's plugins logo"
         }
-      ]
+      ],
+      "latest": "1.4.25"
     },
     {
       "id": "matt-mods",
@@ -58,12 +60,13 @@
       "mc": "1.21.8",
       "version": "1.8",
       "status": "published",
-      "downloads": 107,
+      "downloads": 120,
       "modrinth": "matt-mods",
       "modrinth_type": "mod",
       "github": null,
       "source": null,
-      "modrinth_id": "Kuqt4BUx"
+      "modrinth_id": "Kuqt4BUx",
+      "latest": "1.8"
     },
     {
       "id": "shopah",
@@ -75,7 +78,7 @@
       "mc": "1.21–26.1.2",
       "version": "1.5.8",
       "status": "published",
-      "downloads": 100,
+      "downloads": 104,
       "modrinth": "shopah",
       "modrinth_type": "mod",
       "github": null,
@@ -110,7 +113,8 @@
           "file": "assets/gallery/shopah/06.png",
           "title": "And profit!"
         }
-      ]
+      ],
+      "latest": "1.7.0"
     },
     {
       "id": "deathchestreborn",
@@ -166,7 +170,8 @@
           "file": "assets/gallery/deathchestreborn/07.png",
           "title": "Just like this mess"
         }
-      ]
+      ],
+      "latest": "1.3.2"
     },
     {
       "id": "forkinteractions",
@@ -178,12 +183,13 @@
       "mc": "1.21–1.21.11",
       "version": "1.1.0",
       "status": "published",
-      "downloads": 33,
+      "downloads": 34,
       "modrinth": "forkinteractions",
       "modrinth_type": "mod",
       "github": null,
       "source": "~/Projects/codex/ForkPaperFix",
-      "modrinth_id": "pZOkwiRB"
+      "modrinth_id": "pZOkwiRB",
+      "latest": "1.1.0"
     },
     {
       "id": "superutilities",
@@ -200,7 +206,8 @@
       "modrinth_type": "mod",
       "github": null,
       "source": "~/Projects/vsc/SuperUtilities",
-      "modrinth_id": "GkNRtEW0"
+      "modrinth_id": "GkNRtEW0",
+      "latest": "1.2.2"
     },
     {
       "id": "wtf",
@@ -210,9 +217,9 @@
       "blurb": "A searchable ledger of every chest and shulker box you've touched — what's inside and where you left it.",
       "detail": "Mark a container to start tracking it, and the mod keeps a running record of its contents and last known position. Shulker boxes are followed through inventory, placement, breaking, dropping, and hopper extraction, so the entry stays accurate when the box moves. A searchable grid screen finds any item across everything tracked.",
       "mc": "26.1.2–26.2",
-      "version": "2.4.1",
+      "version": "2.4.2",
       "status": "published",
-      "downloads": 292,
+      "downloads": 319,
       "modrinth": "wtf",
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/wtf",
@@ -231,7 +238,8 @@
           "file": "assets/gallery/wtf/02.png",
           "title": "Inventory icons"
         }
-      ]
+      ],
+      "latest": "2.4.2"
     },
     {
       "id": "capslock",
@@ -247,7 +255,8 @@
       "modrinth": null,
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/CAPSlock",
-      "source": "~/Projects/codex/CAPSlock"
+      "source": "~/Projects/codex/CAPSlock",
+      "latest": "1.2.0"
     },
     {
       "id": "noted",
@@ -263,7 +272,8 @@
       "modrinth": null,
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/Noted",
-      "source": "~/Projects/codex/Noted"
+      "source": "~/Projects/codex/Noted",
+      "latest": "0.1.3"
     },
     {
       "id": "ptime",
@@ -279,7 +289,8 @@
       "modrinth": null,
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/ptime",
-      "source": "~/Projects/codex/ptime"
+      "source": "~/Projects/codex/ptime",
+      "latest": "2.0.0"
     },
     {
       "id": "letmereplace",
@@ -289,13 +300,14 @@
       "blurb": "Litematica addon. Replace a material everywhere in a schematic, keeping every block's rotation and state.",
       "detail": "Adds Replace to every row of Litematica's material list: swap that material across the whole schematic while each block keeps the state it was placed with, so a wall stays a wall and a door stays hinged. Also changes a whole palette along one axis — wood type, colour, oxidation — removes layers with a live preview, confines a replace to a layer selection, picks which half slabs land on, and stands bark blocks upright. Edits are queued and undoable; nothing touches the file until you save to a tagged working copy.",
       "mc": "26.2",
-      "version": "0.4.0",
+      "version": "0.5.0",
       "status": "local",
       "downloads": null,
       "modrinth": null,
       "modrinth_type": null,
       "github": null,
-      "source": "~/Projects/codex/LetMeReplace"
+      "source": "~/Projects/codex/LetMeReplace",
+      "latest": "0.5.0"
     },
     {
       "id": "parakon",
@@ -358,6 +370,18 @@
           "file": "models/axolittle.bbmodel"
         }
       ]
+    }
+  ],
+  "unlisted": [
+    {
+      "name": "EssentiallyOffline",
+      "source": "~/Projects/Evercrafter/EssentiallyOffline",
+      "latest": "1.0.0"
+    },
+    {
+      "name": "PluginBeacon",
+      "source": "~/Projects/Evercrafter/PluginBeacon",
+      "latest": "1.0.0"
     }
   ]
 }
