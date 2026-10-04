@@ -18,6 +18,7 @@ whether there is anything to commit.
 import argparse
 import hashlib
 import json
+import os
 import re
 import subprocess
 import sys
@@ -31,6 +32,7 @@ DATA = ROOT / "projects.json"
 API = "https://api.modrinth.com/v2/project/{}"
 SITE = "https://mattlawliet.github.io"
 UA = "matt-dev-web/1.0 (github.com/mattlawliet)"
+EC_DATA = Path.home() / "Projects/Evercrafter/evercrafter-data"
 
 # A release is boring on purpose: digits and dots. Anything else is a WIP.
 # Anchored to a separator so a descriptive name like
@@ -217,6 +219,34 @@ def sync_unlisted(doc: dict) -> list[str]:
     return changes
 
 
+def export_latest(doc: dict) -> None:
+    """Publish every `latest` as latest.json in the evercrafter-data repo, which the
+    Evercrafter plugin page reads. Runs on every sync, so any project's hook refreshes
+    them all, including plugins without a hook of their own."""
+    if not EC_DATA.is_dir():
+        print(f"  ! {EC_DATA} missing — latest.json not published")
+        return
+    latest = {p["name"]: p["latest"] for p in doc["projects"] + doc.get("unlisted", [])
+              if p.get("latest")}
+    git = lambda *a: subprocess.run(["git", "-C", str(EC_DATA), *a],
+                                    capture_output=True, text=True)
+    # PluginBeacon commits live.json/test.json through the API, so catch up first
+    git("pull", "-q", "--rebase")
+    out = EC_DATA / "latest.json"
+    text = json.dumps(latest, indent=2, ensure_ascii=False) + "\n"
+    if out.is_file() and out.read_text() == text:
+        return
+    out.write_text(text)
+    git("add", "latest.json")
+    git("commit", "-q", "-m", "Update latest releases")
+    if os.environ.get("MATTDEV_NOPUSH"):
+        print(f"evercrafter-data: latest.json committed, push held — 'git -C {EC_DATA} push'")
+    elif git("push", "-q").returncode == 0:
+        print("evercrafter-data: latest.json pushed")
+    else:
+        print(f"evercrafter-data: latest.json committed, push failed — 'git -C {EC_DATA} push'")
+
+
 def mirror_gallery(project: dict, data: dict) -> list[str]:
     """Copy a project's Modrinth gallery into assets/gallery/ and record it.
 
@@ -370,6 +400,9 @@ def main() -> int:
     for line in sync_unlisted(doc):
         print(f"unlisted: {line}")
         total += 1
+
+    if not args.check:
+        export_latest(doc)
 
     if not total:
         print("\nno changes")

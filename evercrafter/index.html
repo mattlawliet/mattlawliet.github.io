@@ -153,8 +153,8 @@ footer { margin-top: 32px; color: var(--muted); font-size: 13px; }
 </main>
 <script>
 // PluginBeacon commits each server's plugin list: live.json from the live server fills Live,
-// test.json from the test server fills Test. Latest for Matt's own plugins comes from the
-// site's projects.json (`latest`: newest release anywhere, not just Modrinth). If a file can't
+// test.json from the test server fills Test. latest.json fills Latest for Matt's own plugins
+// (sync.py writes it: newest release anywhere, not just Modrinth). If a file can't
 // be fetched, the column keeps the values written into this page.
 const DATA = 'https://raw.githubusercontent.com/mattlawliet/evercrafter-data/main/';
 const load = file => fetch(DATA + file).then(r => r.ok ? r.json() : Promise.reject(r.status));
@@ -189,12 +189,10 @@ function fill(data, col, server) {
   return byName;
 }
 
-Promise.allSettled([load('live.json'), load('test.json'),
-                    fetch('/projects.json').then(r => r.ok ? r.json() : Promise.reject(r.status))])
-  .then(([liveRes, testRes, siteRes]) => {
-    if (siteRes.status === 'fulfilled') {
-      const latest = new Map([...siteRes.value.projects, ...(siteRes.value.unlisted ?? [])]
-        .filter(p => p.latest).map(p => [norm(p.name), p.latest]));
+Promise.allSettled([load('live.json'), load('test.json'), load('latest.json')])
+  .then(([liveRes, testRes, latestRes]) => {
+    if (latestRes.status === 'fulfilled') {
+      const latest = new Map(Object.entries(latestRes.value).map(([n, v]) => [norm(n), v]));
       for (const tr of rows) {
         const v = latest.get(norm(tr.dataset.live));
         if (v) Object.assign(tr.cells[3], { textContent: v, className: 'v' });
