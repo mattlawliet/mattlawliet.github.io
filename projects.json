@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-10",
+  "generated": "2026-10-25",
   "note": "Edited by hand for copy; version/status/downloads are overwritten by sync.py. Keep `source` and `modrinth` accurate or sync skips the entry.",
   "projects": [
     {
@@ -219,7 +219,7 @@
       "mc": "26.1.2–26.2",
       "version": "2.4.2",
       "status": "published",
-      "downloads": 319,
+      "downloads": 423,
       "modrinth": "wtf",
       "modrinth_type": "mod",
       "github": "https://github.com/mattlawliet/wtf",
@@ -239,7 +239,7 @@
           "title": "Inventory icons"
         }
       ],
-      "latest": "2.4.2"
+      "latest": "2.4.3"
     },
     {
       "id": "capslock",
